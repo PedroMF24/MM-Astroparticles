@@ -27,7 +27,20 @@ void Shower::funcPhoton() {
     cout << "Im an photon!" << endl;
 }
 
+int Shower::funcPionN() {
+    cout << "Im an Neutral Pion!" << endl;
+    return 0;
+}
 
+int Shower::funcPionP() {
+    cout << "Im an Pion Plus!" << endl;
+    return 1;
+}
+
+int Shower::funcPionM() {
+    cout << "Im an Pion Minus!" << endl;
+    return -1;
+}
 
 // Shower::~Shower() {
 //     for (auto& particlePtr : inParticleVec) {
@@ -53,6 +66,15 @@ void Shower::funcPhoton() {
 //     }
 // }
 
+int Treshold(double Energy) {
+    double minE = 30;
+    if (Energy >= minE)
+        return 0;
+    else {
+        return 1;
+    }
+}
+
 void Shower::BuildShower() {
     nParticles = 0;
     Particle p = InitParticle;
@@ -61,16 +83,30 @@ void Shower::BuildShower() {
     for (int i = 0; i <= InitHeight; i++) {
         for (auto &particle : currentParticles) {
             string name = particle->GetName();
+            double Energy = particle->GetEnergy();
             auto it = functionMap.find(name);
             if (it != functionMap.end()) {
-                // it->second();
+                it->second();
+
                 // Generate new particles based on the current particle
-                Electron* newParticle1 = new Electron(200);
-                Electron* newParticle2 = new Electron(500);
+                // PionN* newParticle1 = new PionN(Energy/3);
+                PionP* newParticle2 = new PionP(Energy/3);
+                PionM* newParticle3 = new PionM(Energy/3);
+
+                // PionN* newParticle3 = new PionN(Energy/3);
+
                 // Add the new particles to nextParticles
-                nextParticles.push_back(newParticle1);
+
+                // nextParticles.push_back(newParticle1);
                 nextParticles.push_back(newParticle2);
+                nextParticles.push_back(newParticle3);
+
                 nParticles += 2; // Update the particle count
+
+                if (Treshold) {
+                    std::cout << "End" << std::endl;
+                    exit(0);
+                }
 
             } else {
                 std::cout << "Function for particle " << name << " not found" << std::endl;

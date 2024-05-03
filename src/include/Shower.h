@@ -67,6 +67,38 @@ class Electron : public Particle {
     // friend std::ostream& operator<<(std::ostream& s, const Electron& e);
 };
 
+class PionN : public Particle {
+    public:
+    PionN(double energy) : Particle("PionN", energy, 0.0, 0) {
+        CrossSection = 0;
+        DecayRate = 1;
+    };
+};
+
+class PionP : public Particle {
+    public:
+    PionP(double energy) : Particle("PionP", energy, 0.0, +1) {
+        CrossSection = 1;
+        DecayRate = 1;
+    };
+    // int GetType() const override { return 0; }
+    
+    // Electron& operator=(const Electron& obj);
+    // friend std::ostream& operator<<(std::ostream& s, const Electron& e);
+};
+
+class PionM : public Particle {
+    public:
+    PionM(double energy) : Particle("PionM", energy, 0.0, -1) {
+        CrossSection = 1;
+        DecayRate = 1;
+    };
+    // int GetType() const override { return 0; }
+    
+    // Electron& operator=(const Electron& obj);
+    // friend std::ostream& operator<<(std::ostream& s, const Electron& e);
+};
+
 class Proton : public Particle {
     public:
     Proton(double energy) : Particle("Proton", energy, 0.0, +1) {}
@@ -123,10 +155,10 @@ class Shower {
 
     void BuildShower();
 
-    double calcXMax() {};
-    double calcNmuons(int height) {};
+    // double calcXMax() {};
+    // double calcNmuons(int height) {};
 
-    void isParticle(Particle &particle);
+    // void isParticle(Particle &particle);
 
     bool isChargeConserved() {return true;}
 
@@ -137,6 +169,9 @@ class Shower {
     void funcElectron();
     void funcProton();
     void funcPhoton();
+    int funcPionN();
+    int funcPionP();
+    int funcPionM();
 
     void CleanParticleVector(vector<Particle*> &vec);
 
@@ -158,7 +193,10 @@ class Shower {
     std::map<std::string, std::function<void()>> functionMap = {
         {"Electron", std::bind(&Shower::funcElectron, this)},
         {"Proton", std::bind(&Shower::funcProton, this)},
-        {"Photon", std::bind(&Shower::funcPhoton, this)}
+        {"Photon", std::bind(&Shower::funcPhoton, this)},
+        {"PionN", std::bind(&Shower::funcPionN, this)},
+        {"PionP", std::bind(&Shower::funcPionP, this)},
+        {"PionM", std::bind(&Shower::funcPionM, this)}
     };
 
     // int HandleParticle(Particle &particle);
