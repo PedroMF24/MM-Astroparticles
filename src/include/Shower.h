@@ -12,6 +12,14 @@
 
 using namespace std;
 
+
+#include <chrono>
+#include <thread>
+
+
+using namespace std::this_thread; // sleep_for, sleep_until
+using namespace std::chrono; // nanoseconds, system_clock, seconds
+
 // Define a TreeNode structure for the tree
 // struct TreeNode {
 //     Particle particle;
@@ -152,6 +160,8 @@ class Shower {
     int GetInitMultiplicity() const {return Multiplicity;}
     int GetHeight() const {return Height;}
     int GetWeight() const {return Weight;}
+    int GetXMax() const {return XMax;}
+    int GetN_mu() const {return N_mu;}
 
     void BuildShower();
 
@@ -173,6 +183,8 @@ class Shower {
     int funcPionP();
     int funcPionM();
 
+    void calcXMax(int newXMax, int height);
+
     void CleanParticleVector(vector<Particle*> &vec);
 
     private:
@@ -180,11 +192,14 @@ class Shower {
     Particle InitParticle;
     double InitEnergy = 1; // GeV
     int Multiplicity = 3;
-    int InitHeight = 5; // In X0s
+    int InitHeight = 10000; // In X0s
     int Weight = 1; // 1 Particle
 
     vector<Particle*> currentParticles;
     vector<Particle*> nextParticles;
+
+    int XMax = 0;
+    int N_mu = 0;
 
     int nParticles = 0;
     int Height = InitHeight;

@@ -4,4 +4,7 @@
 *.steer
 *.txt
 *.dat
-
+*.a
+*.exe
+*.json
+.vscode

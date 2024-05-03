@@ -1,4 +1,9 @@
-#include "include/FileStream.h"
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+
+using namespace std;
 
 void writeDataToFile(const string &filename, const std::vector<double>& XMaxValues, const std::vector<double>& N_muValues) {
     std::ofstream outFile(filename);
@@ -19,6 +24,23 @@ void writeDataToFile(const string &filename, const std::vector<double>& XMaxValu
     // Close the file
     outFile.close();
 }
+
+// int main() {
+//     // Example usage
+//     std::vector<double> XMaxValues = {1.0, 2.0, 3.0, 4.0};
+//     std::vector<double> N_muValues = {0.1, 0.2, 0.3, 0.4};
+    
+//     writeDataToFile("../data/shower_data.dat", XMaxValues, N_muValues);
+
+//     return 0;
+// }   
+
+
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <sstream>
 
 void readDataFromFile(const std::string& filename, std::vector<double>& XMaxValues, std::vector<double>& N_muValues) {
     std::ifstream inFile(filename);
@@ -47,4 +69,27 @@ void readDataFromFile(const std::string& filename, std::vector<double>& XMaxValu
 
     // Close the file
     inFile.close();
+}
+
+int main() {
+    // Example usage
+    std::vector<double> XMaxValues;
+    std::vector<double> N_muValues;
+
+    readDataFromFile("../data/shower_data.dat", XMaxValues, N_muValues);
+
+    // Print the read data
+    std::cout << "XMaxValues: ";
+    for (const auto& value : XMaxValues) {
+        std::cout << value << " ";
+    }
+    std::cout << std::endl;
+
+    std::cout << "N_muValues: ";
+    for (const auto& value : N_muValues) {
+        std::cout << value << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
 }

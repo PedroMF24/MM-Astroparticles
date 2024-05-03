@@ -1,4 +1,5 @@
 #include "include/Shower.h"
+#include "include/Utils.h"
 
 // Define a function type for the functions in the map
 
@@ -67,55 +68,88 @@ int Shower::funcPionM() {
 // }
 
 int Treshold(double Energy) {
-    double minE = 30;
+    double minE = 3;
     if (Energy >= minE)
         return 0;
-    else {
-        return 1;
-    }
+    return 1;
 }
 
 void Shower::BuildShower() {
+
+    std::cout << "--- Begin Shower ---" << std::endl;
+
+    // Utils TheUtils;
+
     nParticles = 0;
+    double Energy = 0;
     Particle p = InitParticle;
     currentParticles.push_back(new Particle(p));
 
+    int newXMax = 0;
+
     for (int i = 0; i <= InitHeight; i++) {
+        // TheUtils.ProgressBar(i, InitHeight);
+        // sleep_for(nanoseconds(10));
+        // sleep_until(system_clock::now() + milliseconds(100));
+
+        printHeight();
+        printNParticles();
+        newXMax = InitHeight-Height;
+        if (newXMax > XMax) {
+            XMax = newXMax;
+            N_mu = nParticles;
+        }
+        std::cout << "current XMax " << newXMax << " , current N_mu " << N_mu << endl;
+        Height--; // Decrease the height
+        nParticles = 0;
+
+
         for (auto &particle : currentParticles) {
             string name = particle->GetName();
-            double Energy = particle->GetEnergy();
+            Energy = particle->GetEnergy();
             auto it = functionMap.find(name);
             if (it != functionMap.end()) {
-                it->second();
+                // it->second();
 
                 // Generate new particles based on the current particle
                 // PionN* newParticle1 = new PionN(Energy/3);
-                PionP* newParticle2 = new PionP(Energy/3);
-                PionM* newParticle3 = new PionM(Energy/3);
+                // for (int j = 0; i < Multiplicity/3; j++)
+                // {
+                //     PionP* newParticle2 = new PionP(Energy/Multiplicity);
+                //     PionM* newParticle3 = new PionM(Energy/Multiplicity);
+                // }
 
+                if (Treshold(Energy/Multiplicity)) { 
+                // std::cout << "End" << std::endl;
+                    break;
+                }
+
+                for (int j = 0; j < Multiplicity/3; j++) {
+                    // std::cout << "Multi for" << std::endl;
+                    nextParticles.push_back(new PionN(Energy/Multiplicity));
+                    nextParticles.push_back(new PionM(Energy/Multiplicity));
+                }
+                
                 // PionN* newParticle3 = new PionN(Energy/3);
 
                 // Add the new particles to nextParticles
 
+                // std::cout << "Add " << i << std::endl;
                 // nextParticles.push_back(newParticle1);
-                nextParticles.push_back(newParticle2);
-                nextParticles.push_back(newParticle3);
+                // nextParticles.push_back(newParticle2);
+                // nextParticles.push_back(newParticle3);
 
-                nParticles += 2; // Update the particle count
-
-                if (Treshold) {
-                    std::cout << "End" << std::endl;
-                    exit(0);
-                }
-
+                nParticles += 2*Multiplicity/3; // Update the particle count
             } else {
                 std::cout << "Function for particle " << name << " not found" << std::endl;
             }
         }
-        printNParticles();
-        nParticles = 0;
-        printHeight();
-        Height--; // Decrease the height
+
+        if(nextParticles.size() == 0) {
+            std::cout << "--- Shower End ---" << std::endl;
+            break;
+        }
+
         // Clear the current particles
         CleanParticleVector(currentParticles);
         // Swap the current and next particle vectors
@@ -123,6 +157,7 @@ void Shower::BuildShower() {
         // Clear the next particles for the next iteration
         nextParticles.clear();
     }
+    // TheUtils.FinishProgressBar();
 }
 
 
