@@ -68,7 +68,7 @@ class Electron : public Particle {
     Electron(double energy) : Particle("Electron", energy, 0.0, -1) {
         CrossSection = 1;
         DecayRate = 1;
-    };
+    }
     // int GetType() const override { return 0; }
     
     // Electron& operator=(const Electron& obj);
@@ -80,7 +80,7 @@ class PionN : public Particle {
     PionN(double energy) : Particle("PionN", energy, 0.0, 0) {
         CrossSection = 0;
         DecayRate = 1;
-    };
+    }
 };
 
 class PionP : public Particle {
@@ -88,7 +88,7 @@ class PionP : public Particle {
     PionP(double energy) : Particle("PionP", energy, 0.0, +1) {
         CrossSection = 1;
         DecayRate = 1;
-    };
+    }
     // int GetType() const override { return 0; }
     
     // Electron& operator=(const Electron& obj);
@@ -100,7 +100,7 @@ class PionM : public Particle {
     PionM(double energy) : Particle("PionM", energy, 0.0, -1) {
         CrossSection = 1;
         DecayRate = 1;
-    };
+    }
     // int GetType() const override { return 0; }
     
     // Electron& operator=(const Electron& obj);
@@ -109,8 +109,11 @@ class PionM : public Particle {
 
 class Proton : public Particle {
     public:
-    Proton(double energy) : Particle("Proton", energy, 0.0, +1) {}
-    
+    Proton(double energy) : Particle("Proton", energy, 0.0, +1) {
+        CrossSection = 0;
+        DecayRate = 2;
+    }
+
 };
 
 class Photon : public Particle {
@@ -155,6 +158,7 @@ class Shower {
 
     ~Shower() = default;
 
+    // Getters
     Particle GetInitParticle() const {return InitParticle;}
     double GetInitEnergy() const {return InitEnergy;}
     int GetInitMultiplicity() const {return Multiplicity;}
@@ -163,15 +167,18 @@ class Shower {
     int GetXMax() const {return XMax;}
     int GetN_mu() const {return N_mu;}
 
-    void BuildShower();
+    // Main methods
+    void BuildSimpleShower();
+    void BuildBetterShower();
 
     // double calcXMax() {};
     // double calcNmuons(int height) {};
 
     // void isParticle(Particle &particle);
 
-    bool isChargeConserved() {return true;}
+    // bool isChargeConserved() {return true;}
 
+    // Prints
     void printNParticles() {cout << "Number of Particles: " << nParticles << endl;}
     void printHeight() {cout << "Height: " << Height << endl;}
 
@@ -204,7 +211,7 @@ class Shower {
     int nParticles = 0;
     int Height = InitHeight;
 
-
+    // Particle map
     std::map<std::string, std::function<void()>> functionMap = {
         {"Electron", std::bind(&Shower::funcElectron, this)},
         {"Proton", std::bind(&Shower::funcProton, this)},

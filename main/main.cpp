@@ -19,6 +19,9 @@ using namespace std;
 
 int main() {
 
+    std::cout << "--- Begin program ---" << std::endl;
+
+
     // MyRandom rng;
 
     // double E0 = 1E+10;
@@ -50,6 +53,7 @@ int main() {
 
     // // cout << shower.GetInitEnergy() << " " << shower.GetInitMultiplicity() << endl;
 
+/* THIS WORKS
     vector<double> XMaxValues, N_muValues;
 
     for (int en = 1000; en < 10001; en += 10)
@@ -66,8 +70,29 @@ int main() {
     }
 
     writeDataToFile("data/test.dat", XMaxValues, N_muValues);
-    
+*/
 
+    vector<double> XMaxValues, N_muValues;
+
+    // for (int en = 1000; en < 10001; en += 10)
+    // {
+        Proton pp(1000); // In GeV en
+        Shower shower(pp, 3);
+        cout << pp.GetName() << " " << pp.GetCharge() << endl;
+        cout << shower.GetInitEnergy() << " " << shower.GetInitMultiplicity() << endl;
+        cout << pp << endl;
+        // shower.BuildShower();
+        
+        // XMaxValues.push_back(shower.GetXMax());
+        // N_muValues.push_back(shower.GetN_mu());
+
+    // }
+
+    std::cout << "Writting data file to data/test.dat" << std::endl;
+    // writeDataToFile("data/test.dat", XMaxValues, N_muValues);
+
+
+    std::cout << "--- End of program ---" << std::endl;
 
     // double A = 1;
     // double beta = 0.5;

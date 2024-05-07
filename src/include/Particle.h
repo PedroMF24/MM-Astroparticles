@@ -40,8 +40,8 @@ protected:
     double Mass;
     int Charge;
     int Weight = 1;
-    double CrossSection;
-    double DecayRate;
+    double CrossSection = 1.;
+    double DecayRate = 1.;
 };
 
 #endif

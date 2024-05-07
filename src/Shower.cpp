@@ -13,6 +13,20 @@ Shower::Shower(Particle &newParticle, int newMultiplicity) :
     else 
         std::cout << "Multiplicity not accepted. Should be multiple of 3" << std::endl;
 
+    int showerFlag = 1;
+    switch (showerFlag)
+    {
+    // Simple shower with no interactions or randomness, only decays
+    case 0:
+        BuildSimpleShower();
+        break;
+    case 1:
+        BuildBetterShower();
+        break;
+    
+    default:
+        break;
+    }
 };
 
 
@@ -67,14 +81,14 @@ int Shower::funcPionM() {
 //     }
 // }
 
-int Treshold(double Energy) {
+int Treshold(double energy) {
     double minE = 3;
-    if (Energy >= minE)
+    if (energy >= minE)
         return 0;
     return 1;
 }
 
-void Shower::BuildShower() {
+void Shower::BuildSimpleShower() {
 
     std::cout << "--- Begin Shower ---" << std::endl;
 
@@ -109,7 +123,7 @@ void Shower::BuildShower() {
             Energy = particle->GetEnergy();
             auto it = functionMap.find(name);
             if (it != functionMap.end()) {
-                // it->second();
+                it->second();
 
                 // Generate new particles based on the current particle
                 // PionN* newParticle1 = new PionN(Energy/3);
@@ -143,6 +157,71 @@ void Shower::BuildShower() {
             } else {
                 std::cout << "Function for particle " << name << " not found" << std::endl;
             }
+        }
+
+        if(nextParticles.size() == 0) {
+            std::cout << "--- Shower End ---" << std::endl;
+            break;
+        }
+
+        // Clear the current particles
+        CleanParticleVector(currentParticles);
+        // Swap the current and next particle vectors
+        currentParticles.swap(nextParticles);
+        // Clear the next particles for the next iteration
+        nextParticles.clear();
+    }
+    // TheUtils.FinishProgressBar();
+}
+
+void Shower::BuildBetterShower() {
+
+    std::cout << "--- Begin Shower ---" << std::endl;
+
+    // Utils TheUtils;
+
+    nParticles = 0;
+    double Energy = 0;
+    Particle p = InitParticle;
+    currentParticles.push_back(new Particle(p));
+
+    int newXMax = 0;
+    double CrossSection = 0;
+    double DecayRate = 0;
+
+    for (int i = 0; i <= InitHeight; i++) {
+
+        printHeight();
+        printNParticles();
+        newXMax = InitHeight-Height;
+        if (newXMax > XMax) {
+            XMax = newXMax;
+            N_mu = nParticles;
+        }
+        std::cout << "current XMax " << newXMax << " , current N_mu " << N_mu << endl;
+        Height--; // Decrease the height
+        nParticles = 0;
+
+        for (auto &particle : currentParticles) {
+            // string name = particle->GetName();
+            Energy = particle->GetEnergy();
+            CrossSection = particle->GetCrossSection();
+            DecayRate = particle->GetDecayRate();
+
+            cout << CrossSection << " " << DecayRate << endl;
+
+            if (Treshold(Energy/Multiplicity)) { 
+            // std::cout << "End" << std::endl;
+                break;
+            }
+
+            for (int j = 0; j < Multiplicity/3; j++) {
+                // std::cout << "Multi for" << std::endl;
+                nextParticles.push_back(new PionN(Energy/Multiplicity));
+                nextParticles.push_back(new PionM(Energy/Multiplicity));
+            }
+
+            nParticles += 2*Multiplicity/3; // Update the particle count
         }
 
         if(nextParticles.size() == 0) {
