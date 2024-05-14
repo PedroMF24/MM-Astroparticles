@@ -60,9 +60,10 @@ set key at graph 1.25, 1
 
 if (id == 3) {
     set output "out/test.png"   
+    set yrange [0:10]
     set ylabel "XMax"
     set xlabel "N_{/Symbol m}"
-    plot "data/test.dat" u 2:1 with points pt 1 ps 1.5 lw 0.6 title "Correlation Plot"
+    plot "data/shower_proton.dat" u 2:1 with points pt 1 ps 1.5 lw 0.6 title "Correlation Plot"
 }
 
 

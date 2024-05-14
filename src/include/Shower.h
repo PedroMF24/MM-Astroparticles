@@ -124,7 +124,9 @@ class Photon : public Particle {
 
 class Iron : public Particle {
     public:
-    Iron(double energy) : Particle("Iron", energy, 0.0, 0) {}
+    Iron(double energy) : Particle("Iron", energy, 0.0, 0) {
+        AtomicNumber = 56;
+    }
     
 };
 
@@ -154,7 +156,7 @@ class Neutron : public Particle {
 class Shower {
     public:
     Shower() = default;
-    Shower(Particle &newParticle, int newMultiplicity);
+    Shower(Particle &newParticle, int newMultiplicity, std::ofstream &outFile);
 
     ~Shower() = default;
 
@@ -169,7 +171,7 @@ class Shower {
 
     // Main methods
     void BuildSimpleShower();
-    void BuildBetterShower();
+    void BuildBetterShower(std::ofstream &outFile);
 
     // double calcXMax() {};
     // double calcNmuons(int height) {};

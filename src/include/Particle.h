@@ -33,6 +33,7 @@ class Particle : public MyRandom {
 
     double GetCrossSection() {return CrossSection;}
     double GetDecayRate() {return DecayRate;}
+    int GetAtomicNumber() {return AtomicNumber;}
 
 protected:
     string Name;
@@ -42,6 +43,7 @@ protected:
     int Weight = 1;
     double CrossSection = 1.;
     double DecayRate = 1.;
+    int AtomicNumber = 1;
 };
 
 #endif

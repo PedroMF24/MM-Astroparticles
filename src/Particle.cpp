@@ -8,6 +8,7 @@ Particle::Particle(const Particle& other) {
     Weight = other.Weight;
     CrossSection = other.CrossSection;
     DecayRate = other.DecayRate;
+    AtomicNumber = other.AtomicNumber;
 }
 
 Particle& Particle::operator=(const Particle &obj) {
@@ -20,6 +21,7 @@ Particle& Particle::operator=(const Particle &obj) {
         Weight = obj.Weight;
         CrossSection = obj.CrossSection;
         DecayRate = obj.DecayRate;
+        AtomicNumber = obj.AtomicNumber;
     }
     return *this;
 }

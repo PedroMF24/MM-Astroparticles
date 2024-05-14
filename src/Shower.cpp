@@ -1,11 +1,12 @@
 #include "include/Shower.h"
 #include "include/Utils.h"
+#include "include/FileStream.h"
 
 // Define a function type for the functions in the map
 
 
 
-Shower::Shower(Particle &newParticle, int newMultiplicity) : 
+Shower::Shower(Particle &newParticle, int newMultiplicity, std::ofstream &outFile) : 
                 InitParticle(newParticle), InitEnergy(newParticle.GetEnergy()) 
 {
     if (newMultiplicity >= 3 && newMultiplicity % 3 == 0)
@@ -21,7 +22,7 @@ Shower::Shower(Particle &newParticle, int newMultiplicity) :
         BuildSimpleShower();
         break;
     case 1:
-        BuildBetterShower();
+        BuildBetterShower(outFile);
         break;
     
     default:
@@ -88,14 +89,16 @@ int Treshold(double energy) {
     return 1;
 }
 
-void Shower::BuildSimpleShower() {
+void 
+Shower::BuildSimpleShower() {
 
-    std::cout << "--- Begin Shower ---" << std::endl;
+    std::cout << "> Begin Shower" << std::endl;
 
     // Utils TheUtils;
 
     nParticles = 0;
     double Energy = 0;
+
     Particle p = InitParticle;
     currentParticles.push_back(new Particle(p));
 
@@ -116,7 +119,6 @@ void Shower::BuildSimpleShower() {
         std::cout << "current XMax " << newXMax << " , current N_mu " << N_mu << endl;
         Height--; // Decrease the height
         nParticles = 0;
-
 
         for (auto &particle : currentParticles) {
             string name = particle->GetName();
@@ -160,7 +162,7 @@ void Shower::BuildSimpleShower() {
         }
 
         if(nextParticles.size() == 0) {
-            std::cout << "--- Shower End ---" << std::endl;
+            std::cout << "> Shower End" << std::endl;
             break;
         }
 
@@ -174,14 +176,22 @@ void Shower::BuildSimpleShower() {
     // TheUtils.FinishProgressBar();
 }
 
-void Shower::BuildBetterShower() {
 
-    std::cout << "--- Begin Shower ---" << std::endl;
+
+/**
+ * @brief 
+ * 
+ * @param outFile 
+ */
+void Shower::BuildBetterShower(std::ofstream &outFile) {
+
+    // std::cout << "> Begin Shower" << std::endl;
 
     // Utils TheUtils;
 
     nParticles = 0;
     double Energy = 0;
+    int AtomN = 0;
     Particle p = InitParticle;
     currentParticles.push_back(new Particle(p));
 
@@ -189,43 +199,52 @@ void Shower::BuildBetterShower() {
     double CrossSection = 0;
     double DecayRate = 0;
 
-    for (int i = 0; i <= InitHeight; i++) {
+    for (int i = 0; i < InitHeight; i++) {
 
-        printHeight();
-        printNParticles();
+        // printHeight();
+        // printNParticles();
         newXMax = InitHeight-Height;
         if (newXMax > XMax) {
             XMax = newXMax;
             N_mu = nParticles;
+            // std::cout << "N_mu: " << N_mu << std::endl;
         }
-        std::cout << "current XMax " << newXMax << " , current N_mu " << N_mu << endl;
+
+        // std::cout << "current XMax " << newXMax << " , current N_mu " << N_mu << endl;
         Height--; // Decrease the height
         nParticles = 0;
 
         for (auto &particle : currentParticles) {
-            // string name = particle->GetName();
+            string name = particle->GetName();
+            // cout << "Name: " << name << endl;
             Energy = particle->GetEnergy();
+            AtomN = particle->GetAtomicNumber();
+            // cout << "AtomN: " << AtomN << endl;
             CrossSection = particle->GetCrossSection();
             DecayRate = particle->GetDecayRate();
 
-            cout << CrossSection << " " << DecayRate << endl;
+            // cout << CrossSection << " " << DecayRate << endl;
 
             if (Treshold(Energy/Multiplicity)) { 
-            // std::cout << "End" << std::endl;
+                // std::cout << "End" << std::endl;
                 break;
             }
 
             for (int j = 0; j < Multiplicity/3; j++) {
                 // std::cout << "Multi for" << std::endl;
-                nextParticles.push_back(new PionN(Energy/Multiplicity));
-                nextParticles.push_back(new PionM(Energy/Multiplicity));
+                for (int k = 0; k < AtomN; k++)
+                {
+                    nextParticles.push_back(new PionN(Energy/(Multiplicity*AtomN)));
+                    nextParticles.push_back(new PionM(Energy/(Multiplicity*AtomN)));
+                    nParticles += 2; // Update the particle count
+                }
             }
-
-            nParticles += 2*Multiplicity/3; // Update the particle count
         }
 
         if(nextParticles.size() == 0) {
-            std::cout << "--- Shower End ---" << std::endl;
+            // Write data in columns
+            outFile << GetXMax() << " " << GetN_mu() << std::endl;
+            // std::cout << "Shower End" << std::endl;
             break;
         }
 
