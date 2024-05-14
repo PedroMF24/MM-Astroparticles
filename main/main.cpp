@@ -6,6 +6,7 @@
 // #include "../src/include/ProgressBar.h"
 
 #include <cmath>
+#include <iomanip>      // std::setprecision
 
 using namespace std;
 
@@ -184,14 +185,25 @@ int main() {
 
     Utils TheUtils;
     TheUtils.StartTimer();
+    
 
     int initE = 10;
-    int maxE = 100;
-    int step = 10;
+    int maxE = 100000;
+    int step = 1000;
 
 //     int initE = 10;
 //     int maxE = 100; // 10000 
 //     int step = 3;
+
+    const string filename = "data/test.dat";
+    
+    std::ofstream outFile(filename);
+    if (!outFile.is_open()) {
+        std::cerr << "Unable to open file." << std::endl;
+        exit(0);
+    }
+    // Write headers
+    outFile << "E0 Ec XMax N_mu" << std::endl;
 
     int totalSteps = (maxE - initE) / step + 1; // Adjust totalSteps calculation
 
@@ -201,12 +213,18 @@ int main() {
     for (int en = initE; en <= maxE; en += step) {
         int currentStep = (en - initE) / step; // Calculate currentStep based on loop progress
         TheUtils.UpdateProgressBar(currentStep);
-        sleep_for(nanoseconds(10));
-        sleep_until(system_clock::now() + milliseconds(100)); // + milliseconds(10)
+        Iron ii(en);
+        // cout << "before shower" << ii.GetEnergy() << endl;
+        Shower shower(ii, 3, outFile);
+        // cout << "after shower" << ii.GetEnergy() << endl;
+        // sleep_for(nanoseconds(10));
+        // sleep_until(system_clock::now() + milliseconds(100)); // + milliseconds(10)
     }
     TheUtils.FinishProgressBar();
 
+    outFile.close();
     TheUtils.StopTimer();
+    // std::cout << "--- End of program ---" << std::endl;
 
     return 0;
 }

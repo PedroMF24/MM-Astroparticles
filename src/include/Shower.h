@@ -168,6 +168,9 @@ class Shower {
     int GetWeight() const {return Weight;}
     int GetXMax() const {return XMax;}
     int GetN_mu() const {return N_mu;}
+    double GetCurrentEnergy() const {return CurrentEnergy;}
+
+    friend std::ostream& operator<<(std::ostream& s, const Shower& p);
 
     // Main methods
     void BuildSimpleShower();
@@ -203,6 +206,7 @@ class Shower {
     int Multiplicity = 3;
     int InitHeight = 10000; // In X0s
     int Weight = 1; // 1 Particle
+    double CurrentEnergy = InitEnergy;
 
     vector<Particle*> currentParticles;
     vector<Particle*> nextParticles;

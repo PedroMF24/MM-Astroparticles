@@ -1,7 +1,7 @@
 reset
 set tics front
 
-id = 3
+id = 4
 
 # set size 0.8,0.5
 # set style fill transparent solid 0.5
@@ -64,6 +64,13 @@ if (id == 3) {
     set ylabel "XMax"
     set xlabel "N_{/Symbol m}"
     plot "data/shower_proton.dat" u 2:1 with points pt 1 ps 1.5 lw 0.6 title "Correlation Plot"
+}
+
+if (id == 4) {
+    set output "out/energy_test.png"   
+    set xlabel "Energy [GeV]"
+    set ylabel "XMax"
+    plot "data/test.dat" u 1:3 with points pt 1 ps 1.5 lw 0.6 title "Energy"
 }
 
 

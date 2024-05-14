@@ -15,10 +15,17 @@ using namespace std;
 
 class Utils {
 public:
-    Utils(int totalSteps, int barWidth = 70) : totalSteps(totalSteps), progressBar(totalSteps, barWidth) {}
-    Utils() : totalSteps(0), progressBar(0) {}
+    Utils(int totalSteps, int barWidth = 70) : totalSteps(totalSteps), progressBar(totalSteps, barWidth) {
+        std::cout << "--- Begin program ---" << std::endl;
+    }
 
-    ~Utils() = default;
+    Utils() : totalSteps(0), progressBar(0) {
+        std::cout << "--- Begin program ---" << std::endl;
+    }
+
+    ~Utils() {
+        std::cout << "--- End of program ---" << std::endl;
+    };
 
     void SetTotalSteps(int totsteps) {
         totalSteps = totsteps;

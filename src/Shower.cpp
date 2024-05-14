@@ -30,6 +30,15 @@ Shower::Shower(Particle &newParticle, int newMultiplicity, std::ofstream &outFil
     }
 };
 
+ostream& operator<<(std::ostream& os, const Shower& ss) {
+    // os << setprecision(3); //  << scientific;
+    os << ss.GetInitEnergy() << " "
+        << ss.GetCurrentEnergy() << " "
+        << ss.GetXMax() << " "
+        << ss.GetN_mu() << endl;
+    return os;
+}
+
 
 void Shower::funcElectron() {
     cout << "Im an electron!" << endl;
@@ -218,6 +227,7 @@ void Shower::BuildBetterShower(std::ofstream &outFile) {
             string name = particle->GetName();
             // cout << "Name: " << name << endl;
             Energy = particle->GetEnergy();
+
             AtomN = particle->GetAtomicNumber();
             // cout << "AtomN: " << AtomN << endl;
             CrossSection = particle->GetCrossSection();
@@ -242,8 +252,10 @@ void Shower::BuildBetterShower(std::ofstream &outFile) {
         }
 
         if(nextParticles.size() == 0) {
+            CurrentEnergy = Energy;
             // Write data in columns
-            outFile << GetXMax() << " " << GetN_mu() << std::endl;
+            // outFile << GetInitEnergy() << " " <<  Energy << " " << GetXMax() << " " << GetN_mu() << std::endl;
+            outFile << *this;
             // std::cout << "Shower End" << std::endl;
             break;
         }
