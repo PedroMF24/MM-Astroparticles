@@ -189,7 +189,7 @@ int main() {
 
     int initE = 10;
     int maxE = 100000;
-    int step = 1000;
+    int step = 100;
 
 //     int initE = 10;
 //     int maxE = 100; // 10000 
@@ -213,17 +213,26 @@ int main() {
     for (int en = initE; en <= maxE; en += step) {
         int currentStep = (en - initE) / step; // Calculate currentStep based on loop progress
         TheUtils.UpdateProgressBar(currentStep);
-        Iron ii(en);
+        // Iron ii(en);
+        Proton pp(en);
         // cout << "before shower" << ii.GetEnergy() << endl;
-        Shower shower(ii, 3, outFile);
+        Shower shower(pp, 3, outFile);
         // cout << "after shower" << ii.GetEnergy() << endl;
         // sleep_for(nanoseconds(10));
         // sleep_until(system_clock::now() + milliseconds(100)); // + milliseconds(10)
     }
     TheUtils.FinishProgressBar();
 
-    outFile.close();
+    // outFile.close();
+    // Proton pp1(10);
+    // if (pp1.Interacts(10))
+    //     cout << "Ints 1" << endl;
+    // Proton pp2(10);
+    // if (pp2.Interacts(0.5))
+    //     cout << "Ints 2" << endl;
+
     TheUtils.StopTimer();
+    TheUtils.PrintTime();
     // std::cout << "--- End of program ---" << std::endl;
 
     return 0;

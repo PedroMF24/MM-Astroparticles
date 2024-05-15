@@ -63,78 +63,7 @@ using namespace std::chrono; // nanoseconds, system_clock, seconds
 
 
 
-class Electron : public Particle {
-    public:
-    Electron(double energy) : Particle("Electron", energy, 0.0, -1) {
-        CrossSection = 1;
-        DecayRate = 1;
-    }
-    // int GetType() const override { return 0; }
-    
-    // Electron& operator=(const Electron& obj);
-    // friend std::ostream& operator<<(std::ostream& s, const Electron& e);
-};
 
-class PionN : public Particle {
-    public:
-    PionN(double energy) : Particle("PionN", energy, 0.0, 0) {
-        CrossSection = 0;
-        DecayRate = 1;
-    }
-};
-
-class PionP : public Particle {
-    public:
-    PionP(double energy) : Particle("PionP", energy, 0.0, +1) {
-        CrossSection = 1;
-        DecayRate = 1;
-    }
-    // int GetType() const override { return 0; }
-    
-    // Electron& operator=(const Electron& obj);
-    // friend std::ostream& operator<<(std::ostream& s, const Electron& e);
-};
-
-class PionM : public Particle {
-    public:
-    PionM(double energy) : Particle("PionM", energy, 0.0, -1) {
-        CrossSection = 1;
-        DecayRate = 1;
-    }
-    // int GetType() const override { return 0; }
-    
-    // Electron& operator=(const Electron& obj);
-    // friend std::ostream& operator<<(std::ostream& s, const Electron& e);
-};
-
-class Proton : public Particle {
-    public:
-    Proton(double energy) : Particle("Proton", energy, 0.0, +1) {
-        CrossSection = 0;
-        DecayRate = 2;
-    }
-
-};
-
-class Photon : public Particle {
-    public:
-    Photon(double energy) : Particle("Photon", energy, 0.0, 0) {}
-    
-};
-
-class Iron : public Particle {
-    public:
-    Iron(double energy) : Particle("Iron", energy, 0.0, 0) {
-        AtomicNumber = 56;
-    }
-    
-};
-
-class Neutron : public Particle {
-    public:
-    Neutron(double energy) : Particle("Neutron", energy, 0.0, 0) {}
-    
-};
 
 // Electron& Electron::operator=(const Electron& obj) {
 //     if (this != &obj) {
@@ -173,8 +102,10 @@ class Shower {
     friend std::ostream& operator<<(std::ostream& s, const Shower& p);
 
     // Main methods
-    void BuildSimpleShower();
+    void BuildBasicShower();
+    void BuildSimpleShower(std::ofstream &outFile);
     void BuildBetterShower(std::ofstream &outFile);
+
 
     // double calcXMax() {};
     // double calcNmuons(int height) {};
@@ -183,17 +114,17 @@ class Shower {
 
     // bool isChargeConserved() {return true;}
 
-    // Prints
+    // Printers
     void printNParticles() {cout << "Number of Particles: " << nParticles << endl;}
     void printHeight() {cout << "Height: " << Height << endl;}
 
 
-    void funcElectron();
-    void funcProton();
-    void funcPhoton();
-    int funcPionN();
-    int funcPionP();
-    int funcPionM();
+    // void funcElectron();
+    // void funcProton();
+    // void funcPhoton();
+    // int funcPionN();
+    // int funcPionP();
+    // int funcPionM();
 
     void calcXMax(int newXMax, int height);
 
@@ -218,14 +149,14 @@ class Shower {
     int Height = InitHeight;
 
     // Particle map
-    std::map<std::string, std::function<void()>> functionMap = {
-        {"Electron", std::bind(&Shower::funcElectron, this)},
-        {"Proton", std::bind(&Shower::funcProton, this)},
-        {"Photon", std::bind(&Shower::funcPhoton, this)},
-        {"PionN", std::bind(&Shower::funcPionN, this)},
-        {"PionP", std::bind(&Shower::funcPionP, this)},
-        {"PionM", std::bind(&Shower::funcPionM, this)}
-    };
+    // std::map<std::string, std::function<void()>> functionMap = {
+    //     {"Electron", std::bind(&Shower::funcElectron, this)},
+    //     {"Proton", std::bind(&Shower::funcProton, this)},
+    //     {"Photon", std::bind(&Shower::funcPhoton, this)},
+    //     {"PionN", std::bind(&Shower::funcPionN, this)},
+    //     {"PionP", std::bind(&Shower::funcPionP, this)},
+    //     {"PionM", std::bind(&Shower::funcPionM, this)}
+    // };
 
     // int HandleParticle(Particle &particle);
 };

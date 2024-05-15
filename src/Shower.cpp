@@ -14,14 +14,17 @@ Shower::Shower(Particle &newParticle, int newMultiplicity, std::ofstream &outFil
     else 
         std::cout << "Multiplicity not accepted. Should be multiple of 3" << std::endl;
 
-    int showerFlag = 1;
+    int showerFlag = 2;
     switch (showerFlag)
     {
     // Simple shower with no interactions or randomness, only decays
     case 0:
-        BuildSimpleShower();
+        BuildBasicShower();
         break;
     case 1:
+        BuildSimpleShower(outFile);
+        break;
+    case 2:
         BuildBetterShower(outFile);
         break;
     
@@ -38,34 +41,34 @@ ostream& operator<<(std::ostream& os, const Shower& ss) {
         << ss.GetN_mu() << endl;
     return os;
 }
+ 
 
+// void Shower::funcElectron() {
+//     cout << "Im an electron!" << endl;
+// }
 
-void Shower::funcElectron() {
-    cout << "Im an electron!" << endl;
-}
+// void Shower::funcProton() {
+//     cout << "Im an proton!" << endl;
+// }
 
-void Shower::funcProton() {
-    cout << "Im an proton!" << endl;
-}
+// void Shower::funcPhoton() {
+//     cout << "Im an photon!" << endl;
+// }
 
-void Shower::funcPhoton() {
-    cout << "Im an photon!" << endl;
-}
+// int Shower::funcPionN() {
+//     cout << "Im an Neutral Pion!" << endl;
+//     return 0;
+// }
 
-int Shower::funcPionN() {
-    cout << "Im an Neutral Pion!" << endl;
-    return 0;
-}
+// int Shower::funcPionP() {
+//     cout << "Im an Pion Plus!" << endl;
+//     return 1;
+// }
 
-int Shower::funcPionP() {
-    cout << "Im an Pion Plus!" << endl;
-    return 1;
-}
-
-int Shower::funcPionM() {
-    cout << "Im an Pion Minus!" << endl;
-    return -1;
-}
+// int Shower::funcPionM() {
+//     cout << "Im an Pion Minus!" << endl;
+//     return -1;
+// }
 
 // Shower::~Shower() {
 //     for (auto& particlePtr : inParticleVec) {
@@ -99,7 +102,7 @@ int Treshold(double energy) {
 }
 
 void 
-Shower::BuildSimpleShower() {
+Shower::BuildBasicShower() {
 
     std::cout << "> Begin Shower" << std::endl;
 
@@ -132,9 +135,9 @@ Shower::BuildSimpleShower() {
         for (auto &particle : currentParticles) {
             string name = particle->GetName();
             Energy = particle->GetEnergy();
-            auto it = functionMap.find(name);
-            if (it != functionMap.end()) {
-                it->second();
+            // auto it = functionMap.find(name);
+            // if (it != functionMap.end()) {
+            //     it->second();
 
                 // Generate new particles based on the current particle
                 // PionN* newParticle1 = new PionN(Energy/3);
@@ -165,9 +168,9 @@ Shower::BuildSimpleShower() {
                 // nextParticles.push_back(newParticle3);
 
                 nParticles += 2*Multiplicity/3; // Update the particle count
-            } else {
-                std::cout << "Function for particle " << name << " not found" << std::endl;
-            }
+            // } else {
+            //     std::cout << "Function for particle " << name << " not found" << std::endl;
+            // }
         }
 
         if(nextParticles.size() == 0) {
@@ -192,7 +195,7 @@ Shower::BuildSimpleShower() {
  * 
  * @param outFile 
  */
-void Shower::BuildBetterShower(std::ofstream &outFile) {
+void Shower::BuildSimpleShower(std::ofstream &outFile) {
 
     // std::cout << "> Begin Shower" << std::endl;
 
@@ -268,6 +271,95 @@ void Shower::BuildBetterShower(std::ofstream &outFile) {
         nextParticles.clear();
     }
     // TheUtils.FinishProgressBar();
+}
+
+
+
+/**
+ * @brief 
+ * 
+ * @param outFile 
+ */
+void Shower::BuildBetterShower(std::ofstream &outFile) {
+    // std::cout << "> Begin Shower" << std::endl;
+
+    // Utils TheUtils;
+
+    nParticles = 0;
+    double Energy = 0;
+    int AtomN = 0;
+    Particle p = InitParticle;
+    currentParticles.push_back(new Particle(p));
+
+    int newXMax = 0;
+    double CrossSection = 0;
+    double DecayRate = 0;
+
+    for (int i = 0; i < InitHeight; i++) {
+
+        // printHeight();
+        // printNParticles();
+        newXMax = InitHeight-Height;
+        if (newXMax > XMax) {
+            XMax = newXMax;
+            N_mu = nParticles;
+            // std::cout << "N_mu: " << N_mu << std::endl;
+        }
+
+        // std::cout << "current XMax " << newXMax << " , current N_mu " << N_mu << endl;
+        Height--; // Decrease the height
+        nParticles = 0;
+
+        for (auto &particle : currentParticles) {
+            string name = particle->GetName();
+            // cout << "Name: " << name << endl;
+            Energy = particle->GetEnergy();
+
+            AtomN = particle->GetAtomicNumber();
+            // cout << "AtomN: " << AtomN << endl;
+            CrossSection = particle->GetCrossSection();
+            DecayRate = particle->GetDecayRate();
+
+            // cout << CrossSection << " " << DecayRate << endl;
+
+            if (particle->Interacts(Energy/Multiplicity)) { 
+                // std::cout << "Interacts" << std::endl;
+                break;
+            }
+            // cout << particle->Interacts(Energy/Multiplicity) << " " << Treshold(Energy/Multiplicity) << endl;
+            // particle->Interacts(Energy/Multiplicity);
+            // if (Treshold(Energy/Multiplicity)) { 
+            // // std::cout << "End" << std::endl;
+            //     break;
+            // }
+
+            for (int j = 0; j < Multiplicity/3; j++) {
+                // std::cout << "Multi for" << std::endl;
+                for (int k = 0; k < AtomN; k++)
+                {
+                    nextParticles.push_back(new PionP(Energy/(Multiplicity*AtomN)));
+                    nextParticles.push_back(new PionM(Energy/(Multiplicity*AtomN)));
+                    nParticles += 2; // Update the particle count
+                }
+            }
+        }
+
+        if(nextParticles.size() == 0) {
+            CurrentEnergy = Energy;
+            // Write data in columns
+            // outFile << GetInitEnergy() << " " <<  Energy << " " << GetXMax() << " " << GetN_mu() << std::endl;
+            outFile << *this;
+            // std::cout << "Shower End" << std::endl;
+            break;
+        }
+
+        // Clear the current particles
+        CleanParticleVector(currentParticles);
+        // Swap the current and next particle vectors
+        currentParticles.swap(nextParticles);
+        // Clear the next particles for the next iteration
+        nextParticles.clear();
+    }
 }
 
 
