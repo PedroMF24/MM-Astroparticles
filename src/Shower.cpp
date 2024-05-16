@@ -154,7 +154,7 @@ Shower::BuildBasicShower() {
 
                 for (int j = 0; j < Multiplicity/3; j++) {
                     // std::cout << "Multi for" << std::endl;
-                    nextParticles.push_back(new PionN(Energy/Multiplicity));
+                    nextParticles.push_back(new PionP(Energy/Multiplicity));
                     nextParticles.push_back(new PionM(Energy/Multiplicity));
                 }
                 
@@ -281,9 +281,6 @@ void Shower::BuildSimpleShower(std::ofstream &outFile) {
  * @param outFile 
  */
 void Shower::BuildBetterShower(std::ofstream &outFile) {
-    // std::cout << "> Begin Shower" << std::endl;
-
-    // Utils TheUtils;
 
     nParticles = 0;
     double Energy = 0;
@@ -296,43 +293,21 @@ void Shower::BuildBetterShower(std::ofstream &outFile) {
     double DecayRate = 0;
 
     for (int i = 0; i < InitHeight; i++) {
-
-        // printHeight();
-        // printNParticles();
-        newXMax = InitHeight-Height;
-        if (newXMax > XMax) {
-            XMax = newXMax;
-            N_mu = nParticles;
-            // std::cout << "N_mu: " << N_mu << std::endl;
-        }
-
-        // std::cout << "current XMax " << newXMax << " , current N_mu " << N_mu << endl;
-        Height--; // Decrease the height
-        nParticles = 0;
+        prepLayer(newXMax);
 
         for (auto &particle : currentParticles) {
             string name = particle->GetName();
-            // cout << "Name: " << name << endl;
             Energy = particle->GetEnergy();
 
             AtomN = particle->GetAtomicNumber();
-            // cout << "AtomN: " << AtomN << endl;
             CrossSection = particle->GetCrossSection();
             DecayRate = particle->GetDecayRate();
-
-            // cout << CrossSection << " " << DecayRate << endl;
-
-            if (particle->Interacts(Energy/Multiplicity)) { 
+            // cout << "Interacts output: " << particle->Interacts(Energy/Multiplicity) << endl;
+            if (particle->Interacts(Energy/Multiplicity)) {
                 // std::cout << "Interacts" << std::endl;
                 break;
             }
-            // cout << particle->Interacts(Energy/Multiplicity) << " " << Treshold(Energy/Multiplicity) << endl;
-            // particle->Interacts(Energy/Multiplicity);
-            // if (Treshold(Energy/Multiplicity)) { 
-            // // std::cout << "End" << std::endl;
-            //     break;
-            // }
-
+            // makeInteractions(Energy, AtomN, particle);
             for (int j = 0; j < Multiplicity/3; j++) {
                 // std::cout << "Multi for" << std::endl;
                 for (int k = 0; k < AtomN; k++)
@@ -346,10 +321,8 @@ void Shower::BuildBetterShower(std::ofstream &outFile) {
 
         if(nextParticles.size() == 0) {
             CurrentEnergy = Energy;
-            // Write data in columns
-            // outFile << GetInitEnergy() << " " <<  Energy << " " << GetXMax() << " " << GetN_mu() << std::endl;
+            // outFile << GetInitEnergy() << " " <<  Energy << " " << GetXMax() << " " << GetN_mu() << std::endl; 
             outFile << *this;
-            // std::cout << "Shower End" << std::endl;
             break;
         }
 
@@ -359,6 +332,35 @@ void Shower::BuildBetterShower(std::ofstream &outFile) {
         currentParticles.swap(nextParticles);
         // Clear the next particles for the next iteration
         nextParticles.clear();
+    }
+}
+
+void Shower::prepLayer(int &newXMax) {
+    newXMax = InitHeight-Height;
+    cout << "out for " << newXMax << endl;
+    if (newXMax > XMax) {
+        XMax = newXMax;
+        N_mu = nParticles;
+        // std::cout << "N_mu: " << N_mu << std::endl;
+    }
+
+    // std::cout << "current XMax " << newXMax << " , current N_mu " << N_mu << endl;
+    Height--; // Decrease the height
+    nParticles = 0;
+}
+
+void Shower::makeInteractions(double energy, int atomn, Particle *&particle) {
+    for (int j = 0; j < Multiplicity/3; j++) {
+        // std::cout << "Multi for" << std::endl;
+        for (int k = 0; k < atomn; k++)
+        {
+            particle->DecayProducts(energy, atomn, nextParticles);
+            nParticles += nextParticles.size();
+            // cout << "ola: " << nParticles << endl;
+            // nextParticles.push_back(new PionP(energy/(Multiplicity*atomn)));
+            // nextParticles.push_back(new PionM(energy/(Multiplicity*atomn)));
+            // nParticles += 2; // Update the particle count
+        }
     }
 }
 

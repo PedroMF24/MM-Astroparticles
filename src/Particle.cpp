@@ -34,3 +34,25 @@ ostream& operator<<(std::ostream& s, const Particle& p) {
         << "Charge=" << p.GetCharge();
     return s;
 }
+
+void PionM::DecayProducts(double energy, int multiplicity, vector<Particle*>& nextParticles) {
+    //if (Interacts(energy/multiplicity)) {
+        nextParticles.push_back(new PionP(energy / multiplicity));
+        nextParticles.push_back(new PionM(energy / multiplicity));
+    //}
+}
+
+void PionP::DecayProducts(double energy, int multiplicity, vector<Particle*>& nextParticles) {
+    //if (Interacts(energy/multiplicity)) {
+        // cout << "got here" << endl;
+        nextParticles.push_back(new PionP(energy / multiplicity));
+        nextParticles.push_back(new PionM(energy / multiplicity));
+    //}
+}
+
+void Proton::DecayProducts(double energy, int multiplicity, vector<Particle*>& nextParticles) {
+    //if (Interacts(energy/multiplicity)) {
+        nextParticles.push_back(new PionP(energy / multiplicity));
+        nextParticles.push_back(new PionM(energy / multiplicity));
+    //}
+}

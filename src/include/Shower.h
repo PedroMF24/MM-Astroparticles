@@ -126,6 +126,9 @@ class Shower {
     // int funcPionP();
     // int funcPionM();
 
+    void makeInteractions(double energy, int atomn, Particle *&particle);
+    void prepLayer(int &newXMax);
+
     void calcXMax(int newXMax, int height);
 
     void CleanParticleVector(vector<Particle*> &vec);

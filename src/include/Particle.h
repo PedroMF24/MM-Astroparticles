@@ -31,6 +31,10 @@ class Particle : public MyRandom {
         return interacts;   
     }
 
+    virtual void DecayProducts(double energy, int multiplicity, vector<Particle*>& nextParticles) {
+        // does nothing;
+    };
+
 //     int Treshold(double energy) {
 //     double minE = 3;
 //     if (energy >= minE)
@@ -62,16 +66,13 @@ protected:
 };
 
 
+
 class Electron : public Particle {
     public:
     Electron(double energy) : Particle("Electron", energy, 0.0, -1) {
         CrossSection = 1;
         DecayRate = 1;
     }
-    // int GetType() const override { return 0; }
-    
-    // Electron& operator=(const Electron& obj);
-    // friend std::ostream& operator<<(std::ostream& s, const Electron& e);
 };
 
 class PionN : public Particle {
@@ -88,10 +89,7 @@ class PionP : public Particle {
         CrossSection = 3;
         DecayRate = 1;
     }
-    // int GetType() const override { return 0; }
-    
-    // Electron& operator=(const Electron& obj);
-    // friend std::ostream& operator<<(std::ostream& s, const Electron& e);
+    void DecayProducts(double energy, int multiplicity, vector<Particle*>& nextParticles) override;
 };
 
 class PionM : public Particle {
@@ -100,10 +98,7 @@ class PionM : public Particle {
         CrossSection = 3;
         DecayRate = 1;
     }
-    // int GetType() const override { return 0; }
-    
-    // Electron& operator=(const Electron& obj);
-    // friend std::ostream& operator<<(std::ostream& s, const Electron& e);
+    void DecayProducts(double energy, int multiplicity, vector<Particle*>& nextParticles) override;
 };
 
 class Proton : public Particle {
@@ -116,7 +111,7 @@ class Proton : public Particle {
         bool decays = (energy < 1) ? true : false;
         return decays;
     }
-
+    void DecayProducts(double energy, int multiplicity, vector<Particle*>& nextParticles) override;
 };
 
 class Photon : public Particle {

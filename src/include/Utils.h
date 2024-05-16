@@ -23,9 +23,15 @@ public:
         std::cout << "--- Begin program ---" << std::endl;
     }
 
-    ~Utils() {
+    // ~Utils() {
+    //     std::cout << "--- End of program ---" << std::endl;
+    // };
+
+    ~Utils() = default;
+
+    void End() {
         std::cout << "--- End of program ---" << std::endl;
-    };
+    }
 
     void SetTotalSteps(int totsteps) {
         totalSteps = totsteps;

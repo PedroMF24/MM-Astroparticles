@@ -2,8 +2,6 @@
 #include "../src/include/Shower.h"
 #include "../src/include/FileStream.h"
 #include "../src/include/Utils.h"
-// #include "../src/include/StopWatch.h"
-// #include "../src/include/ProgressBar.h"
 
 #include <cmath>
 #include <iomanip>      // std::setprecision
@@ -188,8 +186,8 @@ int main() {
     
 
     int initE = 10;
-    int maxE = 100000;
-    int step = 100;
+    int maxE = 1000;
+    int step = 10;
 
 //     int initE = 10;
 //     int maxE = 100; // 10000 
@@ -200,7 +198,7 @@ int main() {
     std::ofstream outFile(filename);
     if (!outFile.is_open()) {
         std::cerr << "Unable to open file." << std::endl;
-        exit(0);
+        exit(EXIT_FAILURE);
     }
     // Write headers
     outFile << "E0 Ec XMax N_mu" << std::endl;
@@ -232,6 +230,7 @@ int main() {
     //     cout << "Ints 2" << endl;
 
     TheUtils.StopTimer();
+    TheUtils.End();
     TheUtils.PrintTime();
     // std::cout << "--- End of program ---" << std::endl;
 
