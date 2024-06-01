@@ -24,7 +24,7 @@ Particle& Particle::operator=(const Particle &obj) {
         AtomicNumber = obj.AtomicNumber;
     }
     return *this;
-}
+} 
 
 ostream& operator<<(std::ostream& s, const Particle& p) {
     s << setprecision(3); //  << scientific;
@@ -35,24 +35,90 @@ ostream& operator<<(std::ostream& s, const Particle& p) {
     return s;
 }
 
-void PionM::DecayProducts(double energy, int multiplicity, vector<Particle*>& nextParticles) {
-    //if (Interacts(energy/multiplicity)) {
-        nextParticles.push_back(new PionP(energy / multiplicity));
-        nextParticles.push_back(new PionM(energy / multiplicity));
-    //}
+void PionM::DecayProducts(double energy, int multiplicity, string randDist, int &nParticles, vector<Particle*>& nextParticles) {
+        
+        vector<double> probs;
+
+        // Gauss
+        if (randDist == RandomDists[0])
+            probs = genGaussProbs(3, energy, 1.5);
+        // Uni
+        else if (randDist == RandomDists[1])
+            probs = genUniProbs(3);
+        // Even
+        else if (randDist == RandomDists[2])
+            probs.insert(probs.end(), 2, 1.0 / 3.0);
+        else
+            cerr << "**Decay Products: Unknown random distribution" << endl;
+
+        // cout << "Gets here!!!" << endl;
+        nextParticles.push_back(new PionP(energy*probs[0]));
+        nextParticles.push_back(new PionM(energy*probs[1]));
+        nParticles += 2; 
+
 }
 
-void PionP::DecayProducts(double energy, int multiplicity, vector<Particle*>& nextParticles) {
-    //if (Interacts(energy/multiplicity)) {
-        // cout << "got here" << endl;
-        nextParticles.push_back(new PionP(energy / multiplicity));
-        nextParticles.push_back(new PionM(energy / multiplicity));
-    //}
+void PionP::DecayProducts(double energy, int multiplicity, string randDist, int &nParticles, vector<Particle*>& nextParticles) {
+        
+        vector<double> probs;
+
+        // Gauss
+        if (randDist == RandomDists[0])
+            probs = genGaussProbs(3, energy, 1.5);
+        // Uni
+        else if (randDist == RandomDists[1])
+            probs = genUniProbs(3);
+        // Even
+        else if (randDist == RandomDists[2])
+            probs.insert(probs.end(), 2, 1.0 / 3.0);
+        else
+            cerr << "**Decay Products: Unknown random distribution" << endl;
+
+        nextParticles.push_back(new PionP(energy*probs[0]));
+        nextParticles.push_back(new PionM(energy*probs[1]));
+        nParticles += 2; 
+
 }
 
-void Proton::DecayProducts(double energy, int multiplicity, vector<Particle*>& nextParticles) {
-    //if (Interacts(energy/multiplicity)) {
-        nextParticles.push_back(new PionP(energy / multiplicity));
-        nextParticles.push_back(new PionM(energy / multiplicity));
-    //}
+void Proton::DecayProducts(double energy, int multiplicity, string randDist, int &nParticles, vector<Particle*>& nextParticles) {
+        
+        vector<double> probs;
+
+        // Gauss
+        if (randDist == RandomDists[0])
+            probs = genGaussProbs(3, energy, 1.5);
+        // Uni
+        else if (randDist == RandomDists[1])
+            probs = genUniProbs(3);
+        // Even
+        else if (randDist == RandomDists[2])
+            probs.insert(probs.end(), 2, 1.0 / 3.0);
+        else
+            cerr << "**Decay Products: Unknown random distribution" << endl;
+
+        nextParticles.push_back(new PionP(energy*probs[0]));
+        nextParticles.push_back(new PionM(energy*probs[1]));
+        nParticles += 2; 
+
+}
+
+void Iron::DecayProducts(double energy, int multiplicity, string randDist, int &nParticles, vector<Particle*>& nextParticles) {
+
+        vector<double> probs;
+
+        // Gauss
+        if (randDist == RandomDists[0])
+            probs = genGaussProbs(3, energy, 1.5);
+        // Uni
+        else if (randDist == RandomDists[1])
+            probs = genUniProbs(3);
+        // Even
+        else if (randDist == RandomDists[2])
+            probs.insert(probs.end(), 2, 1.0 / 3.0);
+        else
+            cerr << "**Decay Products: Unknown random distribution" << endl;
+
+        nextParticles.push_back(new PionP(energy*probs[0]));
+        nextParticles.push_back(new PionM(energy*probs[1]));
+        nParticles += 2; 
 }

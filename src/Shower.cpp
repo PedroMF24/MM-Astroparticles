@@ -4,15 +4,47 @@
 
 // Define a function type for the functions in the map
 
+// Shower::Shower(Particle* newParticle, int newMultiplicity, std::ofstream &outFile) : 
+//                 InitParticle(newParticle), InitEnergy(newParticle->GetEnergy()) 
 
-
-Shower::Shower(Particle &newParticle, int newMultiplicity, std::ofstream &outFile) : 
-                InitParticle(newParticle), InitEnergy(newParticle.GetEnergy()) 
+Shower::Shower(Particle *newParticle, int newMultiplicity, std::ofstream &outFile) : 
+                InitEnergy(newParticle->GetEnergy()) 
 {
     if (newMultiplicity >= 3 && newMultiplicity % 3 == 0)
         Multiplicity = newMultiplicity; 
     else 
         std::cout << "Multiplicity not accepted. Should be multiple of 3" << std::endl;
+
+    currentParticles.push_back(newParticle);
+
+    int showerFlag = 2;
+    switch (showerFlag)
+    {
+    // Simple shower with no interactions or randomness, only decays
+    case 0:
+        BuildBasicShower();
+        break;
+    case 1:
+        BuildSimpleShower(outFile);
+        break;
+    case 2:
+        BuildBetterShower(outFile);
+        break;
+    
+    default:
+        break;
+    }
+};
+
+Shower::Shower(Particle *newParticle, int newMultiplicity, const string newRandomDist, std::ofstream &outFile) : 
+                InitEnergy(newParticle->GetEnergy()), RandomDist(newRandomDist)
+{
+    if (newMultiplicity >= 3 && newMultiplicity % 3 == 0)
+        Multiplicity = newMultiplicity; 
+    else 
+        std::cout << "Multiplicity not accepted. Should be multiple of 3" << std::endl;
+
+    currentParticles.push_back(newParticle);
 
     int showerFlag = 2;
     switch (showerFlag)
@@ -34,65 +66,15 @@ Shower::Shower(Particle &newParticle, int newMultiplicity, std::ofstream &outFil
 };
 
 ostream& operator<<(std::ostream& os, const Shower& ss) {
-    // os << setprecision(3); //  << scientific;
+    os << setprecision(5); //  << scientific;
     os << ss.GetInitEnergy() << " "
+        << log(ss.GetInitEnergy()) << " "
         << ss.GetCurrentEnergy() << " "
         << ss.GetXMax() << " "
-        << ss.GetN_mu() << endl;
+        << ss.GetN_mu() << " "
+        << log(ss.GetN_mu()) << endl;
     return os;
 }
- 
-
-// void Shower::funcElectron() {
-//     cout << "Im an electron!" << endl;
-// }
-
-// void Shower::funcProton() {
-//     cout << "Im an proton!" << endl;
-// }
-
-// void Shower::funcPhoton() {
-//     cout << "Im an photon!" << endl;
-// }
-
-// int Shower::funcPionN() {
-//     cout << "Im an Neutral Pion!" << endl;
-//     return 0;
-// }
-
-// int Shower::funcPionP() {
-//     cout << "Im an Pion Plus!" << endl;
-//     return 1;
-// }
-
-// int Shower::funcPionM() {
-//     cout << "Im an Pion Minus!" << endl;
-//     return -1;
-// }
-
-// Shower::~Shower() {
-//     for (auto& particlePtr : inParticleVec) {
-//         delete particlePtr;
-//     }
-//     inParticleVec.clear();
-//     for (auto& particlePtr : outParticleVec) {
-//         delete particlePtr;
-//     }
-//     outParticleVec.clear();
-// }
-
-// void Shower::isParticle(Particle &particle) {
-
-//     string name = particle.GetName();
-//     auto it = func_map.find(name);
-
-//     if (it != func_map.end()) {
-//         int result = it->second(x);
-//         std::cout << name << "(" << x << ") = " << result << std::endl;
-//     } else {
-//         std::cout << name << " not found" << std::endl;
-//     }
-// }
 
 int Treshold(double energy) {
     double minE = 3;
@@ -111,8 +93,8 @@ Shower::BuildBasicShower() {
     nParticles = 0;
     double Energy = 0;
 
-    Particle p = InitParticle;
-    currentParticles.push_back(new Particle(p));
+    // Particle p = GetInitParticle();
+    // currentParticles.push_back(new Particle(p));
 
     int newXMax = 0;
 
@@ -204,8 +186,8 @@ void Shower::BuildSimpleShower(std::ofstream &outFile) {
     nParticles = 0;
     double Energy = 0;
     int AtomN = 0;
-    Particle p = InitParticle;
-    currentParticles.push_back(new Particle(p));
+    // Particle p = GetInitParticle();
+    // currentParticles.push_back(new Particle(p));
 
     int newXMax = 0;
     double CrossSection = 0;
@@ -282,92 +264,111 @@ void Shower::BuildSimpleShower(std::ofstream &outFile) {
  */
 void Shower::BuildBetterShower(std::ofstream &outFile) {
 
-    nParticles = 0;
     double Energy = 0;
     int AtomN = 0;
-    Particle p = InitParticle;
-    currentParticles.push_back(new Particle(p));
-
     int newXMax = 0;
-    double CrossSection = 0;
-    double DecayRate = 0;
+
+    // cout << "GOT IN" << endl;
+    nParticles = 1*currentParticles[0]->GetAtomicNumber();
 
     for (int i = 0; i < InitHeight; i++) {
+        // printHeight();
+        // printNParticles();
         prepLayer(newXMax);
-
         for (auto &particle : currentParticles) {
             string name = particle->GetName();
             Energy = particle->GetEnergy();
-
+            // cout << "Energy: " << Energy << endl;
             AtomN = particle->GetAtomicNumber();
-            CrossSection = particle->GetCrossSection();
-            DecayRate = particle->GetDecayRate();
-            // cout << "Interacts output: " << particle->Interacts(Energy/Multiplicity) << endl;
-            if (particle->Interacts(Energy/Multiplicity)) {
-                // std::cout << "Interacts" << std::endl;
+            if (!particle->Interacts(Energy/Multiplicity)) {
+                // cout << "Interacted" << endl;
                 break;
             }
-            // makeInteractions(Energy, AtomN, particle);
-            for (int j = 0; j < Multiplicity/3; j++) {
-                // std::cout << "Multi for" << std::endl;
-                for (int k = 0; k < AtomN; k++)
-                {
-                    nextParticles.push_back(new PionP(Energy/(Multiplicity*AtomN)));
-                    nextParticles.push_back(new PionM(Energy/(Multiplicity*AtomN)));
-                    nParticles += 2; // Update the particle count
-                }
-            }
+            makeInteractions(Energy, Multiplicity, AtomN, RandomDist, nParticles, particle); 
         }
-
-        if(nextParticles.size() == 0) {
+        if (nextParticles.size() == 0) {
             CurrentEnergy = Energy;
-            // outFile << GetInitEnergy() << " " <<  Energy << " " << GetXMax() << " " << GetN_mu() << std::endl; 
-            outFile << *this;
+            outFile << " " << *this;
+            CleanParticleVector(currentParticles);
             break;
         }
-
-        // Clear the current particles
         CleanParticleVector(currentParticles);
-        // Swap the current and next particle vectors
         currentParticles.swap(nextParticles);
-        // Clear the next particles for the next iteration
         nextParticles.clear();
     }
 }
 
 void Shower::prepLayer(int &newXMax) {
     newXMax = InitHeight-Height;
-    cout << "out for " << newXMax << endl;
-    if (newXMax > XMax) {
+    // cout << "1. nParticles: " << nParticles << "  N_mu: " << N_mu << endl;
+    if (nParticles > N_mu) {
+        // cout << "2. nParticles: " << nParticles << "  N_mu: " << N_mu << endl;
         XMax = newXMax;
         N_mu = nParticles;
-        // std::cout << "N_mu: " << N_mu << std::endl;
+    } else {
+        // cout << "here" << endl;
+        // printHeight();
+        // printNParticles();
+        // printNmu();
+        CleanParticleVector(currentParticles);
+        nextParticles.clear();
+        return;
     }
-
-    // std::cout << "current XMax " << newXMax << " , current N_mu " << N_mu << endl;
     Height--; // Decrease the height
     nParticles = 0;
 }
 
-void Shower::makeInteractions(double energy, int atomn, Particle *&particle) {
+void Shower::makeInteractions(double energy, int multiplicity, int atomn, string randDist, int &nParticles, Particle *&particle) {
     for (int j = 0; j < Multiplicity/3; j++) {
-        // std::cout << "Multi for" << std::endl;
-        for (int k = 0; k < atomn; k++)
+        for (int k = 0; k < atomn; k++) 
         {
-            particle->DecayProducts(energy, atomn, nextParticles);
-            nParticles += nextParticles.size();
-            // cout << "ola: " << nParticles << endl;
-            // nextParticles.push_back(new PionP(energy/(Multiplicity*atomn)));
-            // nextParticles.push_back(new PionM(energy/(Multiplicity*atomn)));
-            // nParticles += 2; // Update the particle count
+            particle->DecayProducts(energy, multiplicity, randDist, nParticles, nextParticles);
         }
     }
 }
 
-
-void Shower::CleanParticleVector(vector<Particle*> &vec) {
-    for (auto& particlePtr : vec) {
-        delete particlePtr;
+void Shower::CleanParticleVector(vector<Particle*>& vec) {
+    if (!vec.empty()) {
+        for (auto& particlePtr : vec) {
+            delete particlePtr;
+        }
+        vec.clear();
     }
-    vec.clear();
+}
+
+// TODO
+void Shower::BuildContinuumShower(std::ofstream &outFile) {
+
+    double Energy = 0;
+    int AtomN = 0;
+    int newXMax = 0;
+
+    // cout << "GOT IN" << endl;
+    nParticles = 1*currentParticles[0]->GetAtomicNumber();
+
+    for (int i = 0; i < InitHeight; i++) {
+        // printHeight();
+        // printNParticles();
+        prepLayer(newXMax);
+        for (auto &particle : currentParticles) {
+            string name = particle->GetName();
+            Energy = particle->GetEnergy();
+            AtomN = particle->GetAtomicNumber();
+            if (!particle->Interacts(Energy/Multiplicity)) {
+                break;
+            }
+            vector<double> probs = particle->genUniProbs(2);
+            if (probs[0] < 0.5)
+                makeInteractions(Energy, Multiplicity, AtomN, RandomDist, nParticles, particle); 
+        }
+        if(nextParticles.size() == 0) {
+            CurrentEnergy = Energy;
+            outFile << " " << *this;
+            CleanParticleVector(currentParticles);
+            break;
+        }
+        CleanParticleVector(currentParticles);
+        currentParticles.swap(nextParticles);
+        nextParticles.clear();
+    }
 }

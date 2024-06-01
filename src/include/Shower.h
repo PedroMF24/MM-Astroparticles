@@ -12,85 +12,41 @@
 
 using namespace std;
 
-
 #include <chrono>
 #include <thread>
 
-
-using namespace std::this_thread; // sleep_for, sleep_until
-using namespace std::chrono; // nanoseconds, system_clock, seconds
-
-// Define a TreeNode structure for the tree
-// struct TreeNode {
-//     Particle particle;
-//     std::vector<std::unique_ptr<TreeNode>> children; // Using smart pointers for ownership management
-// };
-
-// class ParticleTree {
-// public:
-//     // Constructor
-//     ParticleTree(Particle initParticle, int multiplicity) :
-//         root(new TreeNode{initParticle}), multiplicity(multiplicity) {}
-
-//     // Function to build the tree
-//     void BuildTree() {
-//         BuildTreeRecursive(root.get(), 1); // Start with depth 1
-//     }
-
-// private:
-//     std::unique_ptr<TreeNode> root;
-//     int multiplicity;
-
-//     // Recursive function to build the tree
-//     void BuildTreeRecursive(TreeNode* node, int height) {
-//         if (height == 0) return; // Stop recursion when height reaches 0
-
-//         for (int i = 0; i < multiplicity; ++i) {
-//             Particle newParticle = GenerateNewParticle(node->particle); // Example function to generate new particles
-//             node->children.push_back(std::make_unique<TreeNode>(TreeNode{newParticle}));
-//             BuildTreeRecursive(node->children.back().get(), height - 1); // Decrement height
-//         }
-//     }
-
-
-//     // Example function to generate new particles
-//     Particle GenerateNewParticle(const Particle& parentParticle) {
-//         // Generate new particle based on parent particle
-//         // Example logic...
-//         return Particle("NewParticle", parentParticle.GetEnergy() * 0.5, parentParticle.GetMass(), parentParticle.GetCharge());
-//     }
-// };
-
-
-
-
-
-// Electron& Electron::operator=(const Electron& obj) {
-//     if (this != &obj) {
-//         Particle::operator=(obj);
-//     }
-//     return *this;
-// }
-
-// std::ostream& operator<<(std::ostream& s, const Electron& e) {
-//     s << "Electron: "
-//         << "Name=" << e.GetName() << ", "
-//         << "Energy=" << e.GetEnergy() << ", "
-//         << "Mass=" << e.GetMass() << ", "
-//         << "Charge=" << e.GetCharge();
-//     return s;
-// }
+using namespace std::this_thread; 
+using namespace std::chrono;
 
 
 class Shower {
     public:
     Shower() = default;
-    Shower(Particle &newParticle, int newMultiplicity, std::ofstream &outFile);
+    Shower(Particle *newParticle, int newMultiplicity, std::ofstream &outFile);
+    Shower(Particle *newParticle, int newMultiplicity, const string newRandomDist, std::ofstream &outFile); 
 
-    ~Shower() = default;
+    ~Shower() {
+        CleanParticleVector(currentParticles);
+        currentParticles.clear();
+        CleanParticleVector(nextParticles);
+        nextParticles.clear();
+    }
+    // ~Shower() {
+    //     cout << "In ddestructor" << endl;
+    //     cout << "nextParticles.size " << nextParticles.size() << endl;
+    //     cout << "currentParticles.size " << currentParticles.size() << endl;
+    //     cout << "InitParticle " << InitParticle->GetName() << " " << InitParticle->GetEnergy() << endl;
+    //     cout << "out ddestructor" << endl;
+    // }
+    // ~Shower() { 
+    //     cout << "In ddestructor" << endl;
+    //     delete InitParticle;
+    //     CleanParticleVector(nextParticles);
+    //     CleanParticleVector(currentParticles);
+    //     cout << "out ddestructor" << endl;
+    //     }
 
     // Getters
-    Particle GetInitParticle() const {return InitParticle;}
     double GetInitEnergy() const {return InitEnergy;}
     int GetInitMultiplicity() const {return Multiplicity;}
     int GetHeight() const {return Height;}
@@ -105,37 +61,18 @@ class Shower {
     void BuildBasicShower();
     void BuildSimpleShower(std::ofstream &outFile);
     void BuildBetterShower(std::ofstream &outFile);
+    void BuildContinuumShower(std::ofstream &outFile);
 
-
-    // double calcXMax() {};
-    // double calcNmuons(int height) {};
-
-    // void isParticle(Particle &particle);
-
-    // bool isChargeConserved() {return true;}
 
     // Printers
     void printNParticles() {cout << "Number of Particles: " << nParticles << endl;}
+    void printNmu() {cout << "Number of muons: " << N_mu << endl;}
     void printHeight() {cout << "Height: " << Height << endl;}
 
 
-    // void funcElectron();
-    // void funcProton();
-    // void funcPhoton();
-    // int funcPionN();
-    // int funcPionP();
-    // int funcPionM();
-
-    void makeInteractions(double energy, int atomn, Particle *&particle);
-    void prepLayer(int &newXMax);
-
-    void calcXMax(int newXMax, int height);
-
-    void CleanParticleVector(vector<Particle*> &vec);
-
     private:
 
-    Particle InitParticle;
+    // Particle *InitParticle;
     double InitEnergy = 1; // GeV
     int Multiplicity = 3;
     int InitHeight = 10000; // In X0s
@@ -151,71 +88,11 @@ class Shower {
     int nParticles = 0;
     int Height = InitHeight;
 
-    // Particle map
-    // std::map<std::string, std::function<void()>> functionMap = {
-    //     {"Electron", std::bind(&Shower::funcElectron, this)},
-    //     {"Proton", std::bind(&Shower::funcProton, this)},
-    //     {"Photon", std::bind(&Shower::funcPhoton, this)},
-    //     {"PionN", std::bind(&Shower::funcPionN, this)},
-    //     {"PionP", std::bind(&Shower::funcPionP, this)},
-    //     {"PionM", std::bind(&Shower::funcPionM, this)}
-    // };
+    void prepLayer(int &newXMax);
+    void makeInteractions(double energy, int multiplicity, int atomn, string randDist, int &nParticles, Particle *&particle);
+    void CleanParticleVector(vector<Particle*> &vec);
 
-    // int HandleParticle(Particle &particle);
+    string RandomDist;
+
 };
-
-// int Shower::HandleParticle(Particle &particle) {
-//   return particle.GetType();
-// }
-
-// void Shower::isParticle(Particle &particle) {
-//   int type = HandleParticle(particle);
-//   // Do something based on the particle type
-// }
-
-
-
-
-// class Shower {
-//     public:
-//     Shower() = default;
-//     Shower(Particle &newParticle, int newMultiplicity);
-
-//     ~Shower() = default;
-
-
-//     Particle GetInitParticle() const {return InitParticle;}
-//     double GetInitEnergy() const {return InitEnergy;}
-//     int GetInitMultiplicity() const {return Multiplicity;}
-//     int GetHeight() const {return Height;}
-//     int GetWeight() const {return Weight;}
-
-//     void BuildShower();
-
-//     double calcXMax() {};
-//     double calcNmuons(int height) {};
-
-//     void isParticle(Particle &particle);
-//     int Electron() {return 0;}
-//     int Proton() {return 1;}
-//     int Photon() {return 2;}
-//     int Iron() {return 3;}
-
-//     private:
-
-//     Particle InitParticle;
-//     double InitEnergy = 1; // GeV
-//     int Multiplicity = 3;
-//     int Height = 100; // In X0s
-//     int Weight = 1; // 1 Particle
-
-//     std::map<std::string, std::function<int(int)>> func_map = {
-//     {"electron", Electron},
-//     {"proton", Proton},
-//     {"photon", Photon},
-//     {"iron", Iron},
-//     };
-
-
-// };
 #endif

@@ -19,20 +19,22 @@ class Particle : public MyRandom {
     // Copy constructor
     Particle(const Particle& other);
     // Destructor
-    ~Particle() = default;
+    virtual ~Particle() = default;
 
     // virtual int GetType() const = 0;
 
     virtual bool Decay(double energy) const {return false;};
     inline bool Interacts(double energy) const {
         // cout << energy << " CS: " << CrossSection << endl;
-        bool interacts = (energy < CrossSection) ? true : false;
+        bool interacts = (energy < CrossSection) ? false : true;
         // cout << "Interacts" << endl;
         return interacts;   
     }
 
-    virtual void DecayProducts(double energy, int multiplicity, vector<Particle*>& nextParticles) {
+    virtual void DecayProducts(double energy, int multiplicity, string randDist, int &nParticles, vector<Particle*>& nextParticles) {
         // does nothing;
+        std::cerr << "**Polymorphism problem" << endl;
+        exit(EXIT_FAILURE);
     };
 
 //     int Treshold(double energy) {
@@ -44,6 +46,8 @@ class Particle : public MyRandom {
 
     Particle& operator=(const Particle &obj);
     friend std::ostream& operator<<(std::ostream& s, const Particle& p);
+
+    void SetEnergy(double energy) {Energy = energy;}
 
     string GetName() const { return Name; }
     double GetEnergy() const { return Energy; }
@@ -63,6 +67,8 @@ protected:
     double CrossSection = 1.;
     double DecayRate = 1.;
     int AtomicNumber = 1;
+
+    vector<string> RandomDists = {"Gauss", "Uni", "Even"};
 };
 
 
@@ -89,7 +95,8 @@ class PionP : public Particle {
         CrossSection = 3;
         DecayRate = 1;
     }
-    void DecayProducts(double energy, int multiplicity, vector<Particle*>& nextParticles) override;
+    ~PionP() override = default;  // Override the destructor
+    void DecayProducts(double energy, int multiplicity, string randDist, int &nParticles, vector<Particle*>& nextParticles) override;
 };
 
 class PionM : public Particle {
@@ -98,7 +105,8 @@ class PionM : public Particle {
         CrossSection = 3;
         DecayRate = 1;
     }
-    void DecayProducts(double energy, int multiplicity, vector<Particle*>& nextParticles) override;
+    ~PionM() override = default;  // Override the destructor
+    void DecayProducts(double energy, int multiplicity, string randDist, int &nParticles, vector<Particle*>& nextParticles) override;
 };
 
 class Proton : public Particle {
@@ -107,11 +115,12 @@ class Proton : public Particle {
         CrossSection = 3;
         DecayRate = 2;
     }
+    ~Proton() override = default;  // Override the destructor
     bool Decay(double energy) const override {
         bool decays = (energy < 1) ? true : false;
         return decays;
     }
-    void DecayProducts(double energy, int multiplicity, vector<Particle*>& nextParticles) override;
+    void DecayProducts(double energy, int multiplicity, string randDist, int &nParticles, vector<Particle*>& nextParticles) override;
 };
 
 class Photon : public Particle {
@@ -125,7 +134,7 @@ class Iron : public Particle {
     Iron(double energy) : Particle("Iron", energy, 0.0, 0) {
         AtomicNumber = 56;
     }
-    
+    void DecayProducts(double energy, int multiplicity, string randDist, int &nParticles, vector<Particle*>& nextParticles) override;
 };
 
 class Neutron : public Particle {

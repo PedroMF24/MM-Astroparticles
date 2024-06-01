@@ -3,236 +3,136 @@
 #include "../src/include/FileStream.h"
 #include "../src/include/Utils.h"
 
+#include <iostream>
 #include <cmath>
-#include <iomanip>      // std::setprecision
+#include <iomanip>
+#include <functional>
 
 using namespace std;
 
+void Normal(Utils &Tools, Config &Conf, ofstream &outFile, double energy, Particle* particle);
+void MonteCarlo(Utils &Tools, Config &Conf, ofstream &outFile, double energy, Particle* particle);
+void EnergyFixed(Utils &Tools, Config &Conf, ofstream &outFile, double energy, Particle* particle);
 
-
-// double calcXMax(double E0, int A) {
-//     return log(E0/A);
-// }
-
-// double calcNMuon(double E0, int A, double beta) {
-//     return pow(A, 1-beta)*pow(E0, beta);
-// }
-
-// int main() {
-//     Utils TheUtils;
-
-//     int max = 300;
-//     int step = 2;
-//     int init = 0;
-//     int totalSteps = ceil(max/step-init);
-//     cout << totalSteps << endl;
-//     int entry = 0;
-//     for (int i = init; i < max; i+=step)
-//     {
-//         TheUtils.ProgressBar(entry, totalSteps);
-//         sleep_for(nanoseconds(10));
-//         sleep_until(system_clock::now() + milliseconds(10)); // + seconds(1)
-//         entry++;
-//     }
-//     TheUtils.FinishProgressBar();
-// }
-
-// int main() {
-
-//     StopWatch clock;
-//     clock.StartTimer();
-//     std::cout << "--- Begin program ---" << std::endl;
-
-
-//     // MyRandom rng;
-
-//     // double E0 = 1E+10;
-//     // double β = 1;
-//     // int A = 1;
-//     // for (int i = 0; i < 1000; i++)
-//     // {
-//     //     E0 = rng.UniDist(1E+9, 1E+11);
-
-//     // }
-    
-
-// // Define a map of string keys to class member function pointers
-
-
-
-//     /* TEST RNG */
-//     // MyRandom rng;
-
-//     // for (int i = 0; i < 50; i++)
-//     // {
-//     //     cout << rng.UniDist(-100,100) << endl;
-//     // }
-
-//     /* TEST CLASSES */
-
-//     // // Particle proton("Proton", 100, 1, 1); // Name, Energy, Mass, Charge
-//     // // Shower shower(proton, 3);
-
-//     // // cout << shower.GetInitEnergy() << " " << shower.GetInitMultiplicity() << endl;
-
-// // THIS WORKS
-//     vector<double> XMaxValues, N_muValues;
-//     const string filename = "data/test.dat";
-    
-//     std::ofstream outFile(filename);
-//     if (!outFile.is_open()) {
-//         std::cerr << "Unable to open file." << std::endl;
-//         exit(0);
-//     }
-//     // Write headers
-//     outFile << "XMax N_mu" << std::endl;
-
-
-//     int initE = 10;
-//     int maxE = 100; // 10000 
-//     int step = 3;
-
-//     int totalSteps = (maxE - initE) / step + 1; // Adjust totalSteps calculation
-//     ProgressBar PBar(totalSteps);
-
-//     for (int en = initE; en <= maxE; en += step)
-//     {
-//         // entry++;
-//         int currentStep = (en - initE) / step; // Calculate currentStep based on loop progress
-//         PBar.Update(currentStep);
-//         sleep_for(nanoseconds(10));
-//         sleep_until(system_clock::now() + milliseconds(100)); // + milliseconds(10)
-
-//         Proton pp(en); // In GeV
-//         // Iron ii(en);
-//         Shower shower(pp, 3, outFile);
-//         // cout << pp.GetName() << " " << pp.GetCharge() << endl;
-//         // cout << shower.GetInitEnergy() << " " << shower.GetInitMultiplicity() << endl;
-//         // cout << pp << endl;
-//         // shower.BuildShower();
-        
-//         // XMaxValues.push_back(shower.GetXMax());
-//         // N_muValues.push_back(shower.GetN_mu());
-//     }
-//     PBar.Finish();
-
-//     // Close the file
-//     outFile.close();
-
-//     // writeDataToFile("data/test.dat", XMaxValues, N_muValues);
-
-
-//     // vector<double> XMaxValues, N_muValues;
-
-//     // // for (int en = 1000; en < 10001; en += 10)
-//     // // {
-//     //     Proton pp(1000); // In GeV en
-//     //     Shower shower(pp, 3);
-//     //     cout << pp.GetName() << " " << pp.GetCharge() << endl;
-//     //     cout << shower.GetInitEnergy() << " " << shower.GetInitMultiplicity() << endl;
-//     //     cout << pp << endl;
-//     //     // shower.BuildShower();
-        
-//     //     // XMaxValues.push_back(shower.GetXMax());
-//     //     // N_muValues.push_back(shower.GetN_mu());
-
-//     // // }
-
-//     // std::cout << "Writting data file to data/test.dat" << std::endl;
-//     // // writeDataToFile("data/test.dat", XMaxValues, N_muValues);
-
-
-//     std::cout << "--- End of program ---" << std::endl;
-
-//     // double A = 1;
-//     // double beta = 0.5;
-//     // double E0 = 0;
-
-//     // MyRandom rng;
-
-//     // for (int i = 0; i < 500; i++)
-//     // {
-//     //     E0 = rng.UniDist(1E+9, 1E+11);
-//     //     XMaxValues.push_back(calcXMax(E0, A));
-//     //     N_muValues.push_back(calcNMuon(E0, A, beta));
-//     // }
-    
-//     // writeDataToFile("data/test.dat", XMaxValues, N_muValues);
-    
-
-//     // cout << ee.GetCrossSection();
-
-
-
-//     // Utils theUtils;
-//     // for (int i = 0; i < 10; i++)
-//     // {
-//     //     theUtils.ProgressBar(i, 10);
-//     //     sleep_for(nanoseconds(10));
-//     //     sleep_until(system_clock::now() + seconds(1));
-//     // }
-//     // theUtils.FinishProgressBar();
-
-//     clock.StopTimer();
-//     clock.PrintTime();
-    
-//     return 0;
-// }
+void runShowerCalculations(Utils &Tools, Config &Conf, 
+    const function<void(Utils&, Config&, ofstream&, double, Particle*)> &modeFunc, 
+    int totalSteps, bool useRandomEnergy = false);
 
 int main() {
-
     Utils TheUtils;
     TheUtils.StartTimer();
-    
 
-    int initE = 10;
-    int maxE = 1000;
-    int step = 10;
+    Config config("config.in");
+    cout << config << endl;
 
-//     int initE = 10;
-//     int maxE = 100; // 10000 
-//     int step = 3;
+    string mode = config.get("Mode");
+    string initParticleStr = config.get("InitParticle");
 
-    const string filename = "data/test.dat";
-    
-    std::ofstream outFile(filename);
-    if (!outFile.is_open()) {
-        std::cerr << "Unable to open file." << std::endl;
-        exit(EXIT_FAILURE);
+    // Particle* initParticle = nullptr;
+    // if (initParticleStr == "Proton") {
+    //     initParticle = new Proton(0);  // Energy will be set later
+    // } else if (initParticleStr == "Iron") {
+    //     initParticle = new Iron(0);  // Energy will be set later
+    // } else {
+    //     cerr << "**InitParticle Error: Unknown particle type" << endl;
+    //     return EXIT_FAILURE;
+    // }
+
+    if (mode == "Normal") {
+        int initE = static_cast<int>(stod(config.get("InitEnergy")));
+        int maxE = static_cast<int>(stod(config.get("MaxEnergy")));
+        int step = stoi(config.get("Step"));
+        int totalSteps = (maxE - initE)/step + 1;
+        runShowerCalculations(TheUtils, config, Normal, totalSteps);
+    } else if (mode == "MCarlo") {
+        runShowerCalculations(TheUtils, config, MonteCarlo, 1000, true);
+    } else if (mode == "EFixed") {
+        runShowerCalculations(TheUtils, config, EnergyFixed, 1000);
+    } else {
+        cerr << "**Mode Error: Should never get here" << endl;
     }
-    // Write headers
-    outFile << "E0 Ec XMax N_mu" << std::endl;
 
-    int totalSteps = (maxE - initE) / step + 1; // Adjust totalSteps calculation
-
-    TheUtils.SetTotalSteps(totalSteps);
-
-
-    for (int en = initE; en <= maxE; en += step) {
-        int currentStep = (en - initE) / step; // Calculate currentStep based on loop progress
-        TheUtils.UpdateProgressBar(currentStep);
-        // Iron ii(en);
-        Proton pp(en);
-        // cout << "before shower" << ii.GetEnergy() << endl;
-        Shower shower(pp, 3, outFile);
-        // cout << "after shower" << ii.GetEnergy() << endl;
-        // sleep_for(nanoseconds(10));
-        // sleep_until(system_clock::now() + milliseconds(100)); // + milliseconds(10)
-    }
-    TheUtils.FinishProgressBar();
-
-    // outFile.close();
-    // Proton pp1(10);
-    // if (pp1.Interacts(10))
-    //     cout << "Ints 1" << endl;
-    // Proton pp2(10);
-    // if (pp2.Interacts(0.5))
-    //     cout << "Ints 2" << endl;
+    // delete initParticle; // Cleanup
 
     TheUtils.StopTimer();
     TheUtils.End();
     TheUtils.PrintTime();
-    // std::cout << "--- End of program ---" << std::endl;
 
     return 0;
+}
+
+Particle* createParticle(const string &particleType, double energy) {
+    if (particleType == "Proton") {
+        return new Proton(energy);
+    } else if (particleType == "Iron") {
+        return new Iron(energy);
+    } else {
+        cerr << "**Particle Creation Error: Unknown particle type" << endl;
+        exit(EXIT_FAILURE);
+    }
+}
+
+void runShowerCalculations(Utils &Tools, Config &Conf, 
+    const function<void(Utils&, Config&, ofstream&, double, Particle*)> &modeFunc, 
+    int totalSteps, bool useRandomEnergy) 
+{
+    int initE = static_cast<int>(stod(Conf.get("InitEnergy")));
+    int maxE = static_cast<int>(stod(Conf.get("MaxEnergy")));
+    int step = stoi(Conf.get("Step"));
+
+    const string filename = Conf.get("OutFile");
+    const string extractData = Conf.get("ExtractDataTo");
+    int col1 = stoi(Conf.get("Column1"));
+    int col2 = stoi(Conf.get("Column2"));
+
+    ofstream outFile(filename);
+    if (!outFile.is_open()) {
+        cerr << "Unable to open file." << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    // Write headers
+    outFile << "E0 ln(E0) Ec XMax N_mu ln(N_mu)" << endl;
+
+    Tools.SetTotalSteps(totalSteps);
+    cout << "Calculating showers..." << endl;
+
+    MyRandom RNG;
+
+    for (int i = 0; i < totalSteps; i++) {
+        Tools.UpdateProgressBar(i);
+
+        double energy = useRandomEnergy ? RNG.UniDist(initE, maxE) : initE + i * step;
+        Particle* initParticle = createParticle(Conf.get("InitParticle"), energy);
+        initParticle->SetEnergy(energy);  // Set the energy for the particle
+
+        modeFunc(Tools, Conf, outFile, energy, initParticle);
+    }
+
+    Tools.FinishProgressBar();
+
+    cout << "Extracting data..." << endl;
+    extractColumns(filename, extractData, col1, col2);
+}
+
+
+void Normal(Utils &Tools, Config &Conf, ofstream &outFile, double energy, Particle* particle) {
+    int multiplicity = stoi(Conf.get("Multiplicity"));
+    string randomDist = Conf.get("RandomDist");
+
+    Shower shower(particle, multiplicity, randomDist, outFile);
+}
+
+void MonteCarlo(Utils &Tools, Config &Conf, ofstream &outFile, double energy, Particle* particle) {
+    int multiplicity = stoi(Conf.get("Multiplicity"));
+    string randomDist = Conf.get("RandomDist");
+
+    Shower shower(particle, multiplicity, randomDist, outFile);
+}
+
+void EnergyFixed(Utils &Tools, Config &Conf, ofstream &outFile, double energy, Particle* particle) {
+    int multiplicity = stoi(Conf.get("Multiplicity"));
+    string randomDist = Conf.get("RandomDist");
+
+    Shower shower(particle, multiplicity, randomDist, outFile);
 }

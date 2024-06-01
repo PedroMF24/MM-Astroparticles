@@ -16,11 +16,11 @@ using namespace std;
 class Utils {
 public:
     Utils(int totalSteps, int barWidth = 70) : totalSteps(totalSteps), progressBar(totalSteps, barWidth) {
-        std::cout << "--- Begin program ---" << std::endl;
+        std::cout << "--- Begin program ---" << std::endl << endl;
     }
 
     Utils() : totalSteps(0), progressBar(0) {
-        std::cout << "--- Begin program ---" << std::endl;
+        std::cout << "--- Begin program ---" << std::endl << endl;
     }
 
     // ~Utils() {
@@ -30,7 +30,7 @@ public:
     ~Utils() = default;
 
     void End() {
-        std::cout << "--- End of program ---" << std::endl;
+        std::cout << endl << "--- End of program ---" << std::endl;
     }
 
     void SetTotalSteps(int totsteps) {

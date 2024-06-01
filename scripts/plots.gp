@@ -1,7 +1,7 @@
 reset
 set tics front
 
-id = 4
+id = 11
 
 # set size 0.8,0.5
 # set style fill transparent solid 0.5
@@ -58,12 +58,14 @@ set key at graph 1.25, 1
     # set mxtics 2
     # set mytics 2
 
+
+
 if (id == 3) {
     set output "out/test.png"   
-    set yrange [0:10]
+    set yrange [0:15]
     set ylabel "XMax"
     set xlabel "N_{/Symbol m}"
-    plot "data/shower_proton.dat" u 2:1 with points pt 1 ps 1.5 lw 0.6 title "Correlation Plot"
+    plot "data/test.dat" u 4:3 with points pt 1 ps 1.5 lw 0.6 title "Correlation Plot"
 }
 
 if (id == 4) {
@@ -72,6 +74,106 @@ if (id == 4) {
     set ylabel "XMax"
     plot "data/test.dat" u 1:3 with points pt 1 ps 1.5 lw 0.6 title "Energy"
 }
+
+if (id == 5) {
+    set output "out/lnE0_XMax.png"   
+    set xlabel "ln(E_{0}) [GeV]"
+    set ylabel "XMax [X_{0}]"
+    plot "data/MClnE0_XMax.dat" u 1:2 with points pt 6 ps 1.5 lw 0.6 lc "blue" title "Energy"
+}
+
+if (id == 6) {
+    set output "out/ln(N_mu)_lnE0.png"   
+    set xlabel "ln(E_{0}) [GeV]"
+    set ylabel "ln(N_{/Symbol m})"
+    plot "data/test.dat" u 5:6 with points pt 1 ps 1.5 lw 0.6 title "Energy"
+}
+
+if (id == 7) {
+    set output "out/XMax_Nmu.png"   
+    set xlabel "N_{/Symbol m}"
+    set ylabel "XMax [X0]"
+    plot "data/XMax_Nmu.dat" u 1:2 with points pt 6 ps 1.5 lw 0.6 title "Energy"
+}
+
+if (id == 8) {
+    set output "out/MClnE0_XMax_iron_proton.png"   
+    set xlabel "ln(E_{0}) [GeV]"
+    set xrange [6:15]
+    set yrange [0:10]
+    set ylabel "XMax [X_{0}]"
+    set key outside # This places the legend outside the plot area
+    plot "data/MC_data/MClnE0_XMax.csv" u 1:2 with points pt 6 ps 1.2 lw 0.6 lc "red" title "Proton", \
+        "data/MC_data/MClnE0_XMax.csv" u 3:4 with points pt 2 ps 1.2 lw 0.6 lc "blue" title "Iron" 
+}
+
+if (id == 9) {
+    set output "out/MCN_mu_XMax_iron_proton.png"   
+    set xlabel "N_{/Symbol m}"
+    set logscale xy
+    set xrange [3:3000]
+    set yrange [1:10]
+    set ylabel "XMax [X_{0}]"
+    set key outside # This places the legend outside the plot area
+    plot "data/MC_data/MCN_mu_XMax_proton.csv" u 2:1 with points pt 6 ps 1.2 lw 0.6 lc "red" title "Proton", \
+        "data/MC_data/MCN_mu_XMax_iron.csv" u 2:1 with points pt 6 ps 1.2 lw 0.6 lc "blue" title "Iron" 
+}
+
+if (id == 10) {
+    set output "out/MC_Uni_ln(E0)_XMax_proton.png"   
+    set xlabel "ln(E_{0}) [GeV]"
+    # set logscale xy
+    set xrange [6:15]
+    set yrange [0:11]
+    set ylabel "XMax [X_{0}]"
+    set key outside # This places the legend outside the plot area
+    plot "data/MC_data/MCEDist/MC_Gauss_ln(E0)_XMax_proton.csv" u 1:2 with points pt 6 ps 1.2 lw 0.6 lc "red" title "Gauss", \
+        "data/MC_data/MCEDist/MC_Uni_ln(E0)_XMax_proton.csv" u 1:2 with points pt 6 ps 1.2 lw 0.6 lc "green" title "Uni" , \
+        "data/MC_data/MCEDist/MC_Even_ln(E0)_XMax_proton.csv" u 1:2 with points pt 6 ps 1.2 lw 0.6 lc "blue" title "Even" 
+}
+
+
+if (id == 11) {
+    set output "out/EFixed_N_mu_XMax_proton.png"   
+    set xlabel "N_{/Symbol m}"
+    # set logscale xy
+    # set xrange [0:90]
+    # set yrange [0:8]
+    set ylabel "XMax [X_{0}]"
+    set key outside # This places the legend outside the plot area
+    plot "data/EFixed/EFixed_Gauss_XMax_N_mu_proton.csv" u 1:2 with points pt 6 ps 1.2 lw 0.6 lc "red" title "Gauss", \
+        "data/EFixed/EFixed_Uni_XMax_N_mu_proton.csv" u 1:2 with points pt 6 ps 1.2 lw 0.6 lc "green" title "Uni" , \
+        "data/EFixed/EFixed_Even_XMax_N_mu_proton.csv" u 1:2 with points pt 6 ps 1.2 lw 0.6 lc "blue" title "Even" 
+}
+
+
+
+if (id == 17) {
+# Set the title and labels
+set title "Histogram of Gaussian Distribution"
+set xlabel "Value"
+set ylabel "Frequency"
+
+# Set the output format (e.g., saving the plot as an image)
+set terminal png
+set output "out/histogram.png"
+
+# Configure histogram settings
+set style data histograms
+set style fill solid 1.0 border -1
+
+# Set the bin width and range
+bin_width = 0.5
+bin(x,width) = width * floor(x/width) + width/2.0
+
+# Plot histogram
+plot 'data/test.dat' using (bin($2,bin_width)):(1.0) smooth freq with boxes title 'Gaussian Data'
+
+# Uncomment the following lines to display the plot in a window
+# set terminal qt
+# replot
+}
+
 
 
 
