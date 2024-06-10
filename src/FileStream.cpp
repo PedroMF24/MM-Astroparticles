@@ -89,6 +89,8 @@ void readDataFromFile(const string& filename, vector<double>& XMaxValues, vector
 ostream& operator<<(ostream& s, const Config& con) {
     s << setprecision(3) << scientific;
     s << "--- List Configs ---" << endl
+        << "Model: " << con.get("Model") << endl
+        << "Mode: " << con.get("Mode") << endl
         << "InitParticle: " << con.get("InitParticle") << endl
         << "InitEnergy: " << con.get("InitEnergy") << endl
         << "MaxEnergy: " << con.get("MaxEnergy") << endl

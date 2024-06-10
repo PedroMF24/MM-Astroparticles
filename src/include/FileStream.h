@@ -81,6 +81,7 @@ private:
         set<string> permittedModes = {"Normal", "MCarlo", "EFixed"};
         set<string> permittedInitParticles = {"Proton", "Iron"};
         set<string> permittedRandomDists = {"Gauss", "Uni", "Even"};
+        set<string> permittedModels = {"Discrete", "Continuous"};
 
         // Check Mode
         if (permittedModes.find(config.at("Mode")) == permittedModes.end()) {
@@ -110,6 +111,13 @@ private:
         // Check RandomDist
         if (permittedRandomDists.find(config.at("RandomDist")) == permittedRandomDists.end()) {
             cerr << "Error: Invalid RandomDist: " << config.at("RandomDist") << endl;
+            return false;
+        }
+
+
+        // Check Model
+        if (permittedModels.find(config.at("Model")) == permittedModels.end()) {
+            cerr << "Error: Invalid Model: " << config.at("Model") << endl;
             return false;
         }
 

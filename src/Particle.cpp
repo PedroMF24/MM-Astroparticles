@@ -41,13 +41,13 @@ void PionM::DecayProducts(double energy, int multiplicity, string randDist, int 
 
         // Gauss
         if (randDist == RandomDists[0])
-            probs = genGaussProbs(3, energy, 1.5);
+            probs = genGaussProbs(3, energy, 10);
         // Uni
         else if (randDist == RandomDists[1])
             probs = genUniProbs(3);
         // Even
         else if (randDist == RandomDists[2])
-            probs.insert(probs.end(), 2, 1.0 / 3.0);
+            probs.insert(probs.end(), 2, 1.0 / static_cast<double>(multiplicity));
         else
             cerr << "**Decay Products: Unknown random distribution" << endl;
 
@@ -64,13 +64,13 @@ void PionP::DecayProducts(double energy, int multiplicity, string randDist, int 
 
         // Gauss
         if (randDist == RandomDists[0])
-            probs = genGaussProbs(3, energy, 1.5);
+            probs = genGaussProbs(3, energy, 10);
         // Uni
         else if (randDist == RandomDists[1])
             probs = genUniProbs(3);
         // Even
         else if (randDist == RandomDists[2])
-            probs.insert(probs.end(), 2, 1.0 / 3.0);
+            probs.insert(probs.end(), 2, 1.0 / static_cast<double>(multiplicity));
         else
             cerr << "**Decay Products: Unknown random distribution" << endl;
 
@@ -82,17 +82,17 @@ void PionP::DecayProducts(double energy, int multiplicity, string randDist, int 
 
 void Proton::DecayProducts(double energy, int multiplicity, string randDist, int &nParticles, vector<Particle*>& nextParticles) {
         
-        vector<double> probs;
+        vector<double> probs; 
 
         // Gauss
         if (randDist == RandomDists[0])
-            probs = genGaussProbs(3, energy, 1.5);
+            probs = genGaussProbs(3, energy, 10);
         // Uni
         else if (randDist == RandomDists[1])
             probs = genUniProbs(3);
         // Even
         else if (randDist == RandomDists[2])
-            probs.insert(probs.end(), 2, 1.0 / 3.0);
+            probs.insert(probs.end(), 2, 1.0 / static_cast<double>(multiplicity));
         else
             cerr << "**Decay Products: Unknown random distribution" << endl;
 
@@ -108,7 +108,7 @@ void Iron::DecayProducts(double energy, int multiplicity, string randDist, int &
 
         // Gauss
         if (randDist == RandomDists[0])
-            probs = genGaussProbs(3, energy, 1.5);
+            probs = genGaussProbs(3, energy, 10);
         // Uni
         else if (randDist == RandomDists[1])
             probs = genUniProbs(3);
@@ -118,7 +118,7 @@ void Iron::DecayProducts(double energy, int multiplicity, string randDist, int &
         else
             cerr << "**Decay Products: Unknown random distribution" << endl;
 
-        nextParticles.push_back(new PionP(energy*probs[0]));
-        nextParticles.push_back(new PionM(energy*probs[1]));
+        nextParticles.push_back(new PionP(energy*probs[0]/static_cast<double>(multiplicity)));
+        nextParticles.push_back(new PionM(energy*probs[1]/static_cast<double>(multiplicity)));
         nParticles += 2; 
 }

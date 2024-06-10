@@ -36,17 +36,25 @@ Shower::Shower(Particle *newParticle, int newMultiplicity, std::ofstream &outFil
     }
 };
 
-Shower::Shower(Particle *newParticle, int newMultiplicity, const string newRandomDist, std::ofstream &outFile) : 
-                InitEnergy(newParticle->GetEnergy()), RandomDist(newRandomDist)
+Shower::Shower(Particle *newParticle, int newMultiplicity, const string newRandomDist, string newModel, std::ofstream &outFile) : 
+                InitEnergy(newParticle->GetEnergy()), RandomDist(newRandomDist), Model(newModel)
 {
+    int showerFlag = 0;
+
     if (newMultiplicity >= 3 && newMultiplicity % 3 == 0)
         Multiplicity = newMultiplicity; 
     else 
         std::cout << "Multiplicity not accepted. Should be multiple of 3" << std::endl;
 
+    if (Model == "Continuous")
+        showerFlag = 3;
+    else if (Model == "Discrete")
+        showerFlag = 2;
+    else
+        cerr << "**Should never get here: Unknown model" << endl;
+
     currentParticles.push_back(newParticle);
 
-    int showerFlag = 2;
     switch (showerFlag)
     {
     // Simple shower with no interactions or randomness, only decays
@@ -59,6 +67,8 @@ Shower::Shower(Particle *newParticle, int newMultiplicity, const string newRando
     case 2:
         BuildBetterShower(outFile);
         break;
+    case 3:
+        BuildContinuumShower(outFile);
     
     default:
         break;
@@ -284,7 +294,7 @@ void Shower::BuildBetterShower(std::ofstream &outFile) {
                 // cout << "Interacted" << endl;
                 break;
             }
-            makeInteractions(Energy, Multiplicity, AtomN, RandomDist, nParticles, particle); 
+            MakeDecays(Energy, Multiplicity, AtomN, RandomDist, nParticles, particle); 
         }
         if (nextParticles.size() == 0) {
             CurrentEnergy = Energy;
@@ -318,13 +328,19 @@ void Shower::prepLayer(int &newXMax) {
     nParticles = 0;
 }
 
-void Shower::makeInteractions(double energy, int multiplicity, int atomn, string randDist, int &nParticles, Particle *&particle) {
+void Shower::MakeDecays(double energy, int multiplicity, int atomn, string randDist, int &nParticles, Particle *&particle) {
     for (int j = 0; j < Multiplicity/3; j++) {
         for (int k = 0; k < atomn; k++) 
         {
             particle->DecayProducts(energy, multiplicity, randDist, nParticles, nextParticles);
         }
     }
+}
+
+void Shower::NoDecay(int &nParticles, Particle *&particle) {
+    Particle *copyParticle = particle->clone(); // Use clone method
+    nextParticles.push_back(copyParticle);
+    nParticles += 1;
 }
 
 void Shower::CleanParticleVector(vector<Particle*>& vec) {
@@ -338,32 +354,43 @@ void Shower::CleanParticleVector(vector<Particle*>& vec) {
 
 // TODO
 void Shower::BuildContinuumShower(std::ofstream &outFile) {
-
     double Energy = 0;
     int AtomN = 0;
-    int newXMax = 0;
+    double newXMax = 0;
 
-    // cout << "GOT IN" << endl;
-    nParticles = 1*currentParticles[0]->GetAtomicNumber();
+    double dX = 0.2; // Step size
 
-    for (int i = 0; i < InitHeight; i++) {
-        // printHeight();
+    nParticles = 1 * currentParticles[0]->GetAtomicNumber();
+
+    for (double height = 0; height < InitHeight; height += dX) {
+        // std::cout << height << std::endl;
         // printNParticles();
-        prepLayer(newXMax);
+
+        // prep layer
+        newXMax = static_cast<double>(InitHeight - (InitHeight-height));
+        if (nParticles > N_mu) {
+            XMax = newXMax;
+            N_mu = nParticles;
+        }
+        nParticles = 0;
+
         for (auto &particle : currentParticles) {
-            string name = particle->GetName();
+            std::string name = particle->GetName();
             Energy = particle->GetEnergy();
             AtomN = particle->GetAtomicNumber();
-            if (!particle->Interacts(Energy/Multiplicity)) {
-                break;
+            if (!particle->Interacts(Energy / Multiplicity)) {
+                continue;
             }
-            vector<double> probs = particle->genUniProbs(2);
-            if (probs[0] < 0.5)
-                makeInteractions(Energy, Multiplicity, AtomN, RandomDist, nParticles, particle); 
+            double rng_prob = particle->UniDist(0., 1.);
+            double prob = 1 - exp(-log(2)*dX);
+            if (rng_prob < prob)
+                MakeDecays(Energy, Multiplicity, AtomN, RandomDist, nParticles, particle);
+            else
+                NoDecay(nParticles, particle);
         }
-        if(nextParticles.size() == 0) {
+        if (nextParticles.empty()) {
             CurrentEnergy = Energy;
-            outFile << " " << *this;
+            outFile << setprecision(2) << " " << *this;
             CleanParticleVector(currentParticles);
             break;
         }
@@ -372,3 +399,4 @@ void Shower::BuildContinuumShower(std::ofstream &outFile) {
         nextParticles.clear();
     }
 }
+

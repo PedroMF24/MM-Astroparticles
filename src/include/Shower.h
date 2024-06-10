@@ -23,7 +23,8 @@ class Shower {
     public:
     Shower() = default;
     Shower(Particle *newParticle, int newMultiplicity, std::ofstream &outFile);
-    Shower(Particle *newParticle, int newMultiplicity, const string newRandomDist, std::ofstream &outFile); 
+    Shower(Particle *newParticle, int newMultiplicity, const string newRandomDist, 
+            string newModel, std::ofstream &outFile);
 
     ~Shower() {
         CleanParticleVector(currentParticles);
@@ -51,7 +52,7 @@ class Shower {
     int GetInitMultiplicity() const {return Multiplicity;}
     int GetHeight() const {return Height;}
     int GetWeight() const {return Weight;}
-    int GetXMax() const {return XMax;}
+    double GetXMax() const {return XMax;}
     int GetN_mu() const {return N_mu;}
     double GetCurrentEnergy() const {return CurrentEnergy;}
 
@@ -72,6 +73,7 @@ class Shower {
 
     private:
 
+    string Model = "Discrete";
     // Particle *InitParticle;
     double InitEnergy = 1; // GeV
     int Multiplicity = 3;
@@ -82,14 +84,15 @@ class Shower {
     vector<Particle*> currentParticles;
     vector<Particle*> nextParticles;
 
-    int XMax = 0;
+    double XMax = 0;
     int N_mu = 0;
 
     int nParticles = 0;
     int Height = InitHeight;
 
     void prepLayer(int &newXMax);
-    void makeInteractions(double energy, int multiplicity, int atomn, string randDist, int &nParticles, Particle *&particle);
+    void MakeDecays(double energy, int multiplicity, int atomn, string randDist, int &nParticles, Particle *&particle);
+    void NoDecay(int &nParticles, Particle *&particle);
     void CleanParticleVector(vector<Particle*> &vec);
 
     string RandomDist;

@@ -62,6 +62,10 @@ public:
         stopwatch.PrintTime();
     }
 
+    void Break(int seconds) {
+        stopwatch.Break(seconds);
+    }
+
     void UpdateProgressBar(int currentStep) {
         if (totalSteps > 0) {
             progressBar.Update(currentStep);

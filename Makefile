@@ -1,5 +1,6 @@
 CXX := g++
-CXXFLAGS := -std=c++17 -fPIC 
+CXXFLAGS := -std=c++17 -fPIC
+LDFLAGS := -L lib -l FC -lpthread
 
 UNAME := $(shell uname)
 
@@ -48,7 +49,7 @@ lib/%.a: $(OBJS)
 
 bin/%.exe: bin/%.o lib/libFC.a 
 	@echo executable... $< [$@]
-	$(CXX) $(CXXFLAGS) -o $@ $< -I src -L lib -l FC
+	$(CXX) $(CXXFLAGS) -o $@ $< -I src $(LDFLAGS)
 
 bin/%.o: %.cpp
 	@echo compiling... $< [$@]

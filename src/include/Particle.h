@@ -21,6 +21,11 @@ class Particle : public MyRandom {
     // Destructor
     virtual ~Particle() = default;
 
+    // Add the clone method
+    virtual Particle* clone() const {
+        return new Particle(*this);
+    }
+
     // virtual int GetType() const = 0;
 
     virtual bool Decay(double energy) const {return false;};
@@ -92,30 +97,45 @@ class PionN : public Particle {
 class PionP : public Particle {
     public:
     PionP(double energy) : Particle("PionP", energy, 0.0, +1) {
-        CrossSection = 3;
+        CrossSection = 1;
         DecayRate = 1;
     }
     ~PionP() override = default;  // Override the destructor
+
+    virtual PionP* clone() const override {
+        return new PionP(*this);
+    }
+
     void DecayProducts(double energy, int multiplicity, string randDist, int &nParticles, vector<Particle*>& nextParticles) override;
 };
 
 class PionM : public Particle {
     public:
     PionM(double energy) : Particle("PionM", energy, 0.0, -1) {
-        CrossSection = 3;
+        CrossSection = 1;
         DecayRate = 1;
     }
     ~PionM() override = default;  // Override the destructor
+
+    virtual PionM* clone() const override {
+        return new PionM(*this);
+    }
+
     void DecayProducts(double energy, int multiplicity, string randDist, int &nParticles, vector<Particle*>& nextParticles) override;
 };
 
 class Proton : public Particle {
     public:
     Proton(double energy) : Particle("Proton", energy, 0.0, +1) {
-        CrossSection = 3;
+        CrossSection = 1;
         DecayRate = 2;
     }
     ~Proton() override = default;  // Override the destructor
+
+    virtual Proton* clone() const override {
+        return new Proton(*this);
+    }
+
     bool Decay(double energy) const override {
         bool decays = (energy < 1) ? true : false;
         return decays;
@@ -134,6 +154,12 @@ class Iron : public Particle {
     Iron(double energy) : Particle("Iron", energy, 0.0, 0) {
         AtomicNumber = 56;
     }
+    ~Iron() override = default;  // Override the destructor
+
+    virtual Iron* clone() const override {
+        return new Iron(*this);
+    }
+
     void DecayProducts(double energy, int multiplicity, string randDist, int &nParticles, vector<Particle*>& nextParticles) override;
 };
 

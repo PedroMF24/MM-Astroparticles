@@ -1,0 +1,43 @@
+ ######################################
+# Config file for Astroparticle Course #
+ ######################################
+
+# Discrete (default) or Continuous
+Model: Discrete
+
+# Main Modes (Normal, MCarlo, EFixed)
+Mode: Normal
+
+InitEnergy: 1E3
+MaxEnergy: 1E5
+
+# For Normal Mode
+Step: 100
+
+# Separate the option from the category with a space
+# InitParticle: Proton 
+# Proton or Iron
+
+InitParticle: Proton
+
+# Number of daughter particles that parent particle decays into
+Multiplicity: 3
+
+# Random Distribution for particle Energy on interaction
+# Even, Uni or Gauss
+RandomDist: Even
+
+OutFile: data/test.dat
+
+# 4 and 5 for XMax and N_mu
+# 2 and 6 for lnE0 and lnN_mu
+# 2 and 4 for lnE0 and XMax
+# 2 and 6 for lnE0 and lnN_mu
+# ExtractDataTo: data/MCarlo_Uni_Xmax_N_mu_proton.dat
+ExtractDataTo: data/Even_XMax_lnE0_proton.dat
+Column1: 2
+Column2: 6
+
+
+
+# End

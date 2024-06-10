@@ -1,7 +1,7 @@
 reset
 set tics front
 
-id = 11
+id = 15
 
 # set size 0.8,0.5
 # set style fill transparent solid 0.5
@@ -58,14 +58,15 @@ set key at graph 1.25, 1
     # set mxtics 2
     # set mytics 2
 
-
+set key font ",10" 
 
 if (id == 3) {
     set output "out/test.png"   
-    set yrange [0:15]
-    set ylabel "XMax"
+    set yrange [0:10]
+    set xrange [0:2000]
+    set ylabel "XMax [X_{0}]"
     set xlabel "N_{/Symbol m}"
-    plot "data/test.dat" u 4:3 with points pt 1 ps 1.5 lw 0.6 title "Correlation Plot"
+    plot "data/test.dat" u 5:4 with points pt 1 ps 1.5 lw 0.6 title "Correlation Plot"
 }
 
 if (id == 4) {
@@ -86,7 +87,7 @@ if (id == 6) {
     set output "out/ln(N_mu)_lnE0.png"   
     set xlabel "ln(E_{0}) [GeV]"
     set ylabel "ln(N_{/Symbol m})"
-    plot "data/test.dat" u 5:6 with points pt 1 ps 1.5 lw 0.6 title "Energy"
+    plot "data/test.dat" u 2:6 with points pt 1 ps 1.5 lw 0.6 title "Energy"
 }
 
 if (id == 7) {
@@ -146,12 +147,61 @@ if (id == 11) {
         "data/EFixed/EFixed_Even_XMax_N_mu_proton.csv" u 1:2 with points pt 6 ps 1.2 lw 0.6 lc "blue" title "Even" 
 }
 
+if (id == 12) {
+    set output "out/EProfile_N_mu_XMax_proton.png"   
+    set ylabel "N_{/Symbol m}"
+    # set logscale xy
+    set xrange [0:6]
+    # set yrange [0:8]
+    set xlabel "XMax [X_{0}]"
+    set key outside # This places the legend outside the plot area
+    plot "data/EProfile/Gauss_XMax_N_mu.csv" u 1:2 with points pt 6 ps 1.2 lw 0.6 lc "red" title "Gauss", \
+        "data/EProfile/Uni_XMax_N_mu.csv" u 1:2 with points pt 1 ps 1.2 lw 1 lc "blue" title "Uni" , \
+        "data/EProfile/Even_XMax_N_mu.csv" u 1:2 with points pt 2 ps 1.2 lw 0.6 lc "green" title "Even" 
+}
+
+if (id == 13) {
+    set output "out/Continuous_lnE0_XMax.png"   
+    set xlabel "ln(E_{0}) [GeV]"
+    set ylabel "XMax [X_{0}]"
+    plot "data/Continuous_lnE0_XMax.csv" u 1:2 with points pt 6 ps 1.5 lw 0.6 lc "blue" title "Energy"
+}
+
+if (id == 14) {
+    set output "out/swapped_logEFixed_3proton_XMax_N_mu.png"  
+    set key font ",10" 
+    set xlabel "N_{/Symbol m}"
+    # set xlabel "lnE_{0} [GeV]"
+    set logscale x
+    set yrange [0:8]
+    set xrange [1:200]
+    set ylabel "XMax [X_{0}]"
+    set key outside # This places the legend outside the plot area
+    plot "data/EFixed_Gauss_Xmax_N_mu_proton.csv" u 2:1 with points pt 6 ps 1.5 lw 1 lc "red" title "Gauss", \
+        "data/EFixed_Uni_Xmax_N_mu_proton.csv" u 2:1 with points pt 1 ps 1.5 lw 1 lc "green" title "Uni" , \
+        "data/EFixed_Even_Xmax_N_mu_proton.csv" u 2:1 with points pt 2 ps 1.5 lw 1 lc "blue" title "Even" 
+}
+
+
+if (id == 15) {
+    set output "out/2nd_Test_Continuum_N_mu_XMax_iron_proton.png"   
+    set xlabel "N_{/Symbol m}"
+    set logscale x
+    set xrange [5:1500]
+    set yrange [2:18]
+    # set xrange [10:1000]
+    # set yrange [1:20]
+    set ylabel "XMax [X_{0}]"
+    set key outside # This places the legend outside the plot area
+    plot "data/Continuum_N_mu_XMax_proton.dat" u 2:1 with points pt 6 ps 1.2 lw 0.6 lc "red" title "Proton", \
+        "data/Continuum_N_mu_XMax_iron.dat" u 2:1 with points pt 6 ps 1.2 lw 0.6 lc "blue" title "Iron" 
+}
 
 
 if (id == 17) {
 # Set the title and labels
 set title "Histogram of Gaussian Distribution"
-set xlabel "Value"
+set xlabel "Value"  
 set ylabel "Frequency"
 
 # Set the output format (e.g., saving the plot as an image)

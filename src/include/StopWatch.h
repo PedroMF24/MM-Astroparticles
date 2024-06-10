@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <chrono>
+#include <thread>
 #include <iomanip>
 
 using namespace std;
@@ -18,6 +19,8 @@ public:
     void StopTimer();
     void ResetTimer();
     void Lap();
+
+    void Break(int seconds);
 
     void PrintTime();
 
